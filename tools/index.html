@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <meta charset="UTF-8">
+        <title>Fetcher</title>
+
+        <!--<script src="https://code.createjs.com/createjs-2015.05.21.min.js"></script>-->
+
+        <script src="js/lib/easeljs-0.8.1.combined.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js"></script>
+        <script src="js/lib/jquery.mousewheel.min.js"></script>
+
+        <script src="js/lib/dat.gui.js"></script>
+        <script src="js/lib/FileSaver.js"></script>
+        <script src="js/lib/Utility.0.0.10.js"></script>
+
+        <script src="js/Fetcher.js"></script>
+        <script src="js/CanvasHandler.js"></script>
+
+        <script src="js/lib/spectrum.js"></script>
+        <link rel="stylesheet" type="text/css" href="js/lib/spectrum.css"/>
+
+        <link rel="stylesheet" type="text/css" href="css/style_fetcher.css"/>
+
+    </head>
+    <body onload="Fetcher.init();">
+
+        <div id="button_block">
+
+            <div class="green_button">載入圖片</div>
+            <div class="green_button">載入檔案</div>
+            <input id="image_input" type="file" style="display: none;" accept="image/*"/>
+            <input id="file_input" type="file" style="display: none;" accept="text/plain"/>
+
+            <!--<div class="green_button">編輯 "點"</div>-->
+            <!--<div class="green_button">編輯 "線"</div>-->
+            <div class="green_button">存入暫存一</div>
+            <div class="green_button">存入暫存二</div>
+            <div class="green_button">輸　　出</div>
+
+            <div class="black_button">切換模式</div>
+
+
+            <div class="button_group">
+                <div class="button"></div>
+                <div class="button"></div>
+                <div class="button"></div>
+                <div class="button"></div>
+                <div class="button"></div>
+                <div class="button"></div>
+
+                <label class="input_color_label">
+                    <input id="input_color" type="text"/>
+                </label>
+            </div>
+
+
+        </div>
+
+        <div id="image_block">
+            <div class="image_container"></div>
+        </div>
+
+        <div class="help_text"></div>
+
+    </body>
+</html>

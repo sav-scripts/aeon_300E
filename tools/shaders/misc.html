@@ -1,0 +1,190 @@
+<script id="base_map_vertex" type="x-shader/x-vertex">
+
+    varying vec2 vUv;
+
+    void main()
+    {
+        vUv = uv;
+
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+
+
+</script>
+
+<script id="base_map_fragment" type="x-shader/x-fragment">
+
+    uniform float opacity;
+    uniform sampler2D texture;
+    uniform vec2 screenMouse;
+    uniform float alpha;
+
+    varying vec2 vUv;
+
+    #define PI 3.14159265358979
+    #define HALF_PI (PI/2.)
+
+    void main()
+    {
+
+        vec4 outColor;
+
+        outColor = texture2D(texture, vUv);
+
+        gl_FragColor = outColor;
+    }
+
+</script>
+
+
+<script id="point_layer_vertex" type="x-shader/x-vertex">
+
+    uniform float size;
+
+    void main()
+    {
+        gl_PointSize = size;
+
+        if(position.z > .0)
+        {
+        gl_PointSize += position.z / 10.0;
+        }
+
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+
+
+</script>
+
+<script id="point_layer_fragment" type="x-shader/x-fragment">
+
+    uniform sampler2D texture;
+    uniform float opacity;
+
+    void main()
+    {
+
+        vec4 outColor;
+
+        outColor = texture2D(texture, gl_PointCoord);
+
+        gl_FragColor = outColor;
+        gl_FragColor.w *= opacity;
+    }
+
+</script>
+
+
+
+
+
+
+<script id="line_layer_vertex" type="x-shader/x-vertex">
+
+    attribute float alpha;
+
+    //varying float vAlpha;
+
+    void main()
+    {
+        //vAlpha = alpha;
+
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+
+
+</script>
+
+<script id="line_layer_fragment" type="x-shader/x-fragment">
+
+    uniform float opacity;
+
+    //varying float vAlpha;
+
+    void main()
+    {
+
+        gl_FragColor = vec4(1.0, 1.0, 1.0, opacity);
+    }
+
+</script>
+
+
+<script id="polygon_layer_vertex" type="x-shader/x-vertex">
+
+    uniform float breakProgress;
+
+
+    attribute vec4 color;
+    attribute vec3 randomV;
+
+    varying vec4 vColor;
+
+    void main()
+    {
+        vColor = color;
+
+        vec3 np = position;
+
+        np.x += randomV.x * breakProgress;
+        np.y += randomV.y * breakProgress;
+        //np.z += randomV.z * breakProgress;
+
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(np, 1.0);
+    }
+
+
+</script>
+
+<script id="polygon_layer_fragment" type="x-shader/x-fragment">
+
+    uniform float breakProgress;
+    uniform float opacity;
+
+    varying vec4 vColor;
+
+    void main()
+    {
+
+        //gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+        gl_FragColor = vColor;
+        gl_FragColor.w *= opacity * (1.0 - breakProgress);
+    }
+
+</script>
+
+
+<script id="random_line_vertex" type="x-shader/x-vertex">
+
+
+    attribute float alpha;
+
+    varying float vAlpha;
+
+    void main()
+    {
+        vAlpha = alpha;
+
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+
+
+</script>
+
+<script id="random_line_fragment" type="x-shader/x-fragment">
+
+
+    uniform float opacity;
+
+    varying float vAlpha;
+
+    void main()
+    {
+
+        gl_FragColor = vec4(1.0, 1.0, 1.0, vAlpha * opacity);
+    }
+
+</script>
+
+
+
