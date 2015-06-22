@@ -45,10 +45,12 @@
     {
         gl_PointSize = size;
 
+
         if(position.z > .0)
         {
-        gl_PointSize += position.z / 10.0;
+          gl_PointSize += position.z / 10.0;
         }
+
 
         gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
     }

@@ -2,42 +2,105 @@
 <html>
     <head lang="en">
         <meta charset="UTF-8">
+        <!--<meta name="viewport" content="width=1200">-->
         <title>AEON 300E</title>
     </head>
 
-    <script src="js/lib/three.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js"></script>
 
-    <!--<script src="js/lib/dat.gui.js"></script>-->
-    <script src="js/lib/Utility.0.0.10.js"></script>
-
-    <!--<script src="js/lib/earcut.js"></script>-->
-
-    <script src="js/ShaderLoader.js"></script>
-
-    <script src="js/lib/dat.gui.js"></script>
-
-    <script src="js/lib/Helper.1.0.1.js"></script>
-    <script src="../tools/js/WireGraphic.js"></script>
-
-    <script src="js/Index.js"></script>
-    <script src="js/Menu.js"></script>
-    <script src="js/Main.js"></script>
 
     <link href="css/style.css" rel="stylesheet" type="text/css">
 
 
     <body onload="Main.init();">
 
-        <div id="index_block">
+        <div id="loading_block">
+            <div class="loading_icon"></div>
+
+
+        </div>
+
+        <script src="js/lib/three.min.js"></script>
+        <script src="js/lib/jquery.min.js"></script>
+        <script src="js/lib/TweenMax.min.js"></script>
+
+        <!--<script src="js/lib/dat.gui.js"></script>-->
+        <script src="js/lib/Utility.0.0.10.js"></script>
+
+        <!--<script src="js/lib/earcut.js"></script>-->
+
+        <script src="js/ShaderLoader.js"></script>
+
+        <script src="js/lib/dat.gui.js"></script>
+
+        <script src="js/lib/Helper.1.0.1.js"></script>
+        <script src="../tools/js/WireGraphic.js"></script>
+
+        <script src="js/lib/jquery.mousewheel.min.js"></script>
+        <script src="js/lib/hammer.min.js"></script>
+
+        <script src="js/Index.js"></script>
+        <script src="js/Feature.js"></script>
+        <script src="js/Menu.js"></script>
+        <script src="js/Main.js"></script>
+
+
+
+
+        <div id="index_block" class="scroll_block" hash="/Index">
 
             <img class="background" src="images/index_bg_1920.jpg"/>
+            <img class="index_bike" src="images/index_bike_1920.png"/>
+            <img class="index_text_0" src="images/index_tit01_1920.png"/>
+            <img class="index_text_1" src="images/index_tit01_1920.png"/>
+            <img class="index_text_2" src="images/index_tit02_1920.png"/>
 
         </div>
 
 
+        <div id="brand_block" class="scroll_block" hash="/Brand">
+        </div>
+
+        <div id="feature_block" class="scroll_block" hash="/Feature">
+            <div class="feature_1"></div>
+            <div class="feature_2"></div>
+            <div class="feature_3"></div>
+            <div class="feature_4"></div>
+        </div>
+
+        <div id="spec_block" class="scroll_block" hash="/Spec">
+        </div>
+
+        <!--<div id="watch_block" class="scroll_block" hash="/Watch">-->
+        <!--</div>-->
+
+        <div id="big_menu_block">
+
+            <div class="trigger_container">
+                <div class="trigger_bar"></div>
+                <div class="trigger_bar"></div>
+                <div class="trigger_bar"></div>
+                <div class="trigger_bar"></div>
+            </div>
+
+            <div class="basement">
+                <div class="button_group">
+                    <div class="menu_button"></div>
+                    <div class="menu_button"></div>
+                    <div class="menu_button"></div>
+                    <div class="menu_button"></div>
+                    <div class="menu_button"></div>
+                    <div class="menu_button"></div>
+                    <div class="menu_button"></div>
+                </div>
+                <div class="link_info"></div>
+                <div class="link_download"></div>
+            </div>
+
+        </div>
+
         <div id="small_menu_block">
+
+            <div class="red_line"></div>
 
             <div class="button_group">
                 <div class="button">
@@ -60,11 +123,11 @@
                     <div class="core_2"></div>
                     <div class="core_3"></div>
                 </div>
-                <div class="button">
-                    <div class="core_1"></div>
-                    <div class="core_2"></div>
-                    <div class="core_3"></div>
-                </div>
+                <!--<div class="button">-->
+                    <!--<div class="core_1"></div>-->
+                    <!--<div class="core_2"></div>-->
+                    <!--<div class="core_3"></div>-->
+                <!--</div>-->
             </div>
 
         </div>

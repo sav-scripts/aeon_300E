@@ -61,6 +61,22 @@
         return dom;
     };
 
+
+    Helper.$extract = function (selector, sourceDom, parentDom, domIndex)
+    {
+        if (domIndex == null) domIndex = 0;
+        if (sourceDom == null) sourceDom = document;
+
+        var dom = $(sourceDom).find(selector).get(domIndex);
+        if (!dom) console.error("can't find dom, selector: " + selector + ", source: " + sourceDom);
+
+        Helper.getInitValue(dom);
+
+        if (parentDom != null) parentDom.appendChild(dom);
+
+        return $(dom);
+    };
+
     Helper.pxToPercent = function (dom, parentWidth, parentHeight)
     {
         process("width", parentWidth);
@@ -112,7 +128,6 @@
             geom.b = init.b = getValue($(dom).css("bottom"));
             geom.scale = init.scale = 1;
         }
-
 
 //        console.log("width = " + $(dom).css("width"));
         //console.log("width = " + dom.currentStyle.width);

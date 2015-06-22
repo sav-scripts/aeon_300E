@@ -1,5 +1,5 @@
 html, body{
-    background:#000;
+    background:#484937;
     position: absolute;
     top:0;
     left:0;
@@ -8,26 +8,65 @@ html, body{
     width:100%;
     height: 100%;
     overflow: hidden;
+    /*overflow-x: hidden;*/
+    /*overflow-y: scroll;*/
+}
+img {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
 }
 
-#index_block{
+body{
+    height:150%;
+}
+
+.scroll_block{
+
     position: fixed;
     width:100%;
     height: 100%;
     top:0;
     left:0;
     overflow: hidden;
-}
-#index_block .background{
-    position: absolute;
+    visibility: hidden;
 }
 
+/** loading **/
+#loading_block{
+    position: fixed;
+    z-index: 8001;
+    width: 100%;
+    height: 100%;
+    top:0;
+    left:0;
+    background: #484937;
+}
+#loading_block .loading_icon{
+    position: absolute;
+    background:url(../images/loading.gif);
+    width: 300px;
+    height: 190px;
+    left:50%;
+    top:50%;
+    margin-left: -150px;
+    margin-top: -95px;;
+}
+
+
+/** small menu **/
 #small_menu_block{
     position: fixed;
     top:50%;
     right:0;
     width:40px;
     margin-top: -117px;
+}
+#small_menu_block .button_group{
+    position: absolute;
+    z-index: 1;
+    top:0;
+    left:0;
 }
 #small_menu_block .button{
     position: absolute;
@@ -80,4 +119,236 @@ html, body{
     height: 16px;
     left:9px;
     top:9px;
+}
+#small_menu_block .red_line{
+    position: absolute;
+    width:1px;
+    background:#d1141b;
+    height:200px;
+    left:16px;
+    top:17px;
+    z-index: 0;
+}
+
+/** big menu **/
+#big_menu_block{
+    position: fixed;
+    top:0;
+    right:0;
+    z-index: 1000;
+    height: 100%;
+}
+.trigger_container{
+    position: absolute;
+    top:10px;
+    right:10px;
+    /*background: #000;*/
+    width:32px;
+    height: 27px;
+    cursor: pointer;
+    z-index: 1;
+}
+.trigger_bar{
+    position: absolute;
+    width: 32px;
+    height:6px;
+    background:#d1141b;
+    z-index: 10;
+}
+
+.trigger_bar:nth-of-type(1) {
+    top:0;
+}
+.trigger_bar:nth-of-type(2) {
+    top:13px;
+}
+.trigger_bar:nth-of-type(3) {
+    top:26px;
+}
+.trigger_bar:nth-of-type(4) {
+    top:0;
+    left:13px;
+    width:6px;
+    height:32px;
+}
+#big_menu_block .basement{
+    position: absolute;
+    width:280px;
+    top:0;
+    right:-280px;
+    height:100%;
+    background: #151515;
+    z-index: 0;
+}
+#big_menu_block .button_group{
+    position: absolute;
+    left:50%;
+    top:70px;
+    width:200px;
+    /*height:300px;*/
+    margin-left: -100px;
+    /*background: #000;*/
+}
+
+#big_menu_block .menu_button{
+
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 10px;
+    background: url(../images/menu_txt_1920.png) no-repeat;
+
+    width:128px;
+    height:30px;
+    /*border: 1px solid#fff;*/
+    cursor: pointer;
+}
+
+#big_menu_block .menu_button:nth-of-type(2){
+    background-position: 0 -57px;
+    cursor: default;
+}
+
+#big_menu_block .menu_button:nth-of-type(3){
+    background-position: 0 -114px;
+}
+
+#big_menu_block .menu_button:nth-of-type(4){
+    background-position: 0 -171px;
+    cursor: default;
+}
+
+#big_menu_block .menu_button:nth-of-type(5){
+    background-position: 0 -228px;
+}
+
+#big_menu_block .menu_button:nth-of-type(6){
+    background-position: 0 -285px;
+    cursor: default;
+}
+
+#big_menu_block .menu_button:nth-of-type(7){
+    background-position: 0 -342px;
+}
+
+.menu_red_line{
+    position: absolute;
+    width:128px;
+    height:1px;
+    background: #d1141b;
+    left:50%;
+    margin-left: -64px;
+}
+#big_menu_block .link_info{
+    position: absolute;
+    background: url(../images/menu_btn01_1920.png);
+    width: 225px;
+    height: 70px;
+    /*border: 1px solid #fff;*/
+    bottom: 80px;
+    left:50%;
+    margin-left: -112px;
+    cursor: pointer;
+
+}
+#big_menu_block .link_download {
+    position: absolute;
+    background: url(../images/menu_btn02_1920.png);
+    width: 225px;
+    height: 70px;
+    /*border: 1px solid #fff;*/
+    bottom: 10px;
+    left:50%;
+    margin-left: -112px;
+    cursor: pointer;
+}
+#big_menu_block .link_info:hover{
+    background-position: 0 -84px;
+}
+#big_menu_block .link_download:hover{
+    background-position: 0 -84px;
+}
+
+/** index **/
+#index_block{
+}
+#index_block .background{
+    position: absolute;
+}
+
+.index_bike{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -767px;
+    margin-top: -404px;
+}
+.index_text_0{
+    position: absolute;
+    top:50%;
+    left:50%;
+    margin-top: -220px;
+    margin-left: 20px;
+}
+.index_text_1{
+    position: absolute;
+    top:50%;
+    left:50%;
+    margin-top: -340px;
+    margin-left: 20px;
+    visibility: hidden;
+}
+.index_text_2{
+    position: absolute;
+    top:50%;
+    left:50%;
+    margin-left: 20px;
+    margin-top: 90px;
+    visibility: hidden;
+}
+
+/** brand **/
+#brand_block{
+    background:url(../images/brand_1920.jpg);
+    background-size: cover;
+}
+
+
+/** feature **/
+#feature_block{
+}
+.feature_1, .feature_2, .feature_3, .feature_4{
+    position: absolute;
+    width: 100%;
+    height:100%;
+    top:0;
+    left:0;
+    visibility: hidden;
+}
+.feature_1{
+    background:url(../images/product1_1920.jpg);
+    background-size:cover;
+    visibility: visible;
+}
+.feature_2{
+    background:url(../images/product2_1920.jpg);
+    background-size:cover;
+}
+.feature_3{
+    background:url(../images/product3_1920.jpg);
+    background-size:cover;
+}
+.feature_4{
+    background:url(../images/product4_1920.jpg);
+    background-size:cover;
+}
+/** spec **/
+#spec_block{
+    background:url(../images/detail_1920.jpg);
+    background-size: cover;
+}
+
+
+/** watch **/
+#watch_block{
+    background: #445533;
 }

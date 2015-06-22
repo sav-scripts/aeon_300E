@@ -63,7 +63,7 @@
 
             //_camera = new THREE.PerspectiveCamera( 45, _width / _height, 1, 5500);
             //_camera = new THREE.OrthographicCamera(_width / -2, _width / 2, _height / 2, _height / -2, 1, 1000);
-            _camera = new THREE.OrthographicCamera(0, _width, 0, _height, 1, 1000);
+            _camera = new THREE.OrthographicCamera(0, _width, 0, _height, -1000, 1000);
 
             window.camera = _camera;
 
@@ -175,76 +175,85 @@
             if(__currentGraphicId == targetId) return;
             if(__nextGraphicId == targetId) return;
 
-            TweenMax.to(PointLayer.object3D.material.uniforms.opacity,1, {value:1});
+            TweenMax.to(PointLayer.object3D.material.uniforms.opacity,.5, {value:1});
             //TweenMax.to(LineLayer.object3D.material.uniforms.opacity,1, {value:__settings.maxLineAlpha});
-            //TweenMax.to(LineLayer.object3D.material.uniforms.opacity,.5, {value:0},.5);
+            TweenMax.to(LineLayer.object3D.material.uniforms.opacity,.5, {value:0, onComplete:null},.5);
+
+            nextStep();
 
 
-            RandomLine.object3D.visible = true;
-
-            __settings.randomPower = setting.randomPower;
-
-            __nextGraphicId = targetId;
-
-            var currentImage = __graphicDic[__currentGraphicId].image;
-            var targetImage = __graphicDic[__nextGraphicId].image;
-
-
-            TweenMax.to(currentImage,.5, {autoAlpha:0});
-
-            TweenMax.killTweensOf(__tweenObj);
-
-            __tweenObj.polygonChanged = false;
-            __tweenObj.left = _container.position.x;
-            __tweenObj.top = _container.position.y;
-
-            __tweenObj.progress = 0;
-
-            var hLeft = currentImage.offset.left + (targetImage.offset.left - currentImage.offset.left) * .5;
-            var hTop = currentImage.offset.top + (targetImage.offset.top - currentImage.offset.top) * .5;
-
-            var hLeft2 = currentImage.offset.left + (targetImage.offset.left - currentImage.offset.left) * .6;
-            var hTop2 = currentImage.offset.top + (targetImage.offset.top - currentImage.offset.top) * .6;
-
-
-            var tl = new TimelineMax();
-            tl.to(__tweenObj, 1.5, {progress:.5, ease:setting.outFunc, left:hLeft, top:hTop, onUpdate:onProgressUpdate});
-            tl.to(__tweenObj, 2, {progress:.6, ease:Linear.easeNone, left:hLeft2, top:hTop2, onUpdate:onProgressUpdate});
-            tl.to(__tweenObj,1.3, {progress:1, ease:setting.inFunc, left:targetImage.offset.left, top:targetImage.offset.top, onUpdate:onProgressUpdate});
-
-
-            tl.add(function()
+            function nextStep()
             {
+
+                RandomLine.object3D.visible = true;
+
+                __settings.randomPower = setting.randomPower;
+
+                __nextGraphicId = targetId;
+
+                var currentImage = __graphicDic[__currentGraphicId].image;
+                var targetImage = __graphicDic[__nextGraphicId].image;
+
+
+                TweenMax.to(currentImage,.5, {autoAlpha:0});
+
+                TweenMax.killTweensOf(__tweenObj);
+
+                __tweenObj.polygonChanged = false;
+                __tweenObj.left = _container.position.x;
+                __tweenObj.top = _container.position.y;
+
                 __tweenObj.progress = 0;
-                __nextGraphicId = null;
 
-                RandomLine.object3D.visible = false;
+                var hLeft = currentImage.offset.left + (targetImage.offset.left - currentImage.offset.left) * .5;
+                var hTop = currentImage.offset.top + (targetImage.offset.top - currentImage.offset.top) * .5;
 
-                _p.changeTo(targetId);
+                var hLeft2 = currentImage.offset.left + (targetImage.offset.left - currentImage.offset.left) * .6;
+                var hTop2 = currentImage.offset.top + (targetImage.offset.top - currentImage.offset.top) * .6;
+
+                var ds = 1;
+
+                var tl = new TimelineMax();
+                tl.to(__tweenObj, 1.5*ds, {progress:.5, ease:setting.outFunc, left:hLeft, top:hTop, onUpdate:onProgressUpdate});
+                tl.to(__tweenObj, 2*ds, {progress:.6, ease:Linear.easeNone, left:hLeft2, top:hTop2, onUpdate:onProgressUpdate});
+                tl.to(__tweenObj,1.3*ds, {progress:1, ease:setting.inFunc, left:targetImage.offset.left, top:targetImage.offset.top, onUpdate:onProgressUpdate});
 
 
-
-
-                //PolygonLayer.object3D.visible = true;
-                //PolygonLayer.object3D.material.uniforms.opacity.value = 0;
-                //TweenMax.to(PolygonLayer.object3D.material.uniforms.opacity,.5, {value:1});
-
-
-
-
-                TweenMax.delayedCall(.5, function()
+                tl.add(function()
                 {
-                    //TweenMax.to(PointLayer.object3D.material.uniforms.opacity,.7, {value:0});
-                    //TweenMax.to(LineLayer.object3D.material.uniforms.opacity,.7, {value:0});
+                    __tweenObj.progress = 0;
+                    __nextGraphicId = null;
 
-                    //PolygonLayer.breakOut(cb);
-                    TweenMax.set(targetImage, {autoAlpha:0});
-                    TweenMax.to(targetImage,.5, {autoAlpha:1});
+                    RandomLine.object3D.visible = false;
 
-                    if(cb) cb.apply();
+                    _p.changeTo(targetId);
+
+
+
+
+                    //PolygonLayer.object3D.visible = true;
+                    //PolygonLayer.object3D.material.uniforms.opacity.value = 0;
+                    //TweenMax.to(PolygonLayer.object3D.material.uniforms.opacity,.5, {value:1});
+
+
+
+
+                    TweenMax.delayedCall(.5, function()
+                    {
+                        TweenMax.to(PointLayer.object3D.material.uniforms.opacity,.7, {value:0});
+                        TweenMax.to(LineLayer.object3D.material.uniforms.opacity,.7, {value:0});
+
+                        //PolygonLayer.breakOut(cb);
+                        TweenMax.set(targetImage, {autoAlpha:0});
+                        TweenMax.to(targetImage,.5, {autoAlpha:1});
+
+                        if(cb) cb.apply();
+                    });
+
                 });
 
-            });
+
+            }
         };
 
         function onProgressUpdate()
@@ -411,7 +420,6 @@
                     size:{type:"f", value:15 * window.devicePixelRatio},
                     texture:{type:"t", value:texture}
                 },
-                blending: THREE.AdditiveBlending,
                 transparent: true,
                 depthTest: false,
                 vertexShader:   ShaderLoader.getShader("misc", "#point_layer_vertex"),
@@ -451,7 +459,7 @@
             var pointCount = rawPointList.length;
 
             var randomRange = 500;
-            var rs = -randomRange*.5;
+            var rs = randomRange*.5;
 
 
             for(i=0;i<pointCount;i++)
@@ -465,10 +473,12 @@
                     x: obj.x,
                     y: obj.y,
                     z: 0,
-                    rx: rs + Math.random() * randomRange,
-                    ry: rs + Math.random() * randomRange,
-                    rz: rs + Math.random() * randomRange
+                    rx: -rs + Math.random() * randomRange,
+                    ry: -rs + Math.random() * randomRange,
+                    rz: Math.random() * rs
                 };
+
+                //console.log(vertex);
 
                 pointDic[obj.id] =
                 {
@@ -509,6 +519,10 @@
                     _p.positions[i*3] = vertex.x + (nVertex.x-vertex.x) * progress + vertex.rx * __tweenObj.randomProgress;
                     _p.positions[i*3+1] = vertex.y + (nVertex.y-vertex.y) * progress + vertex.ry * __tweenObj.randomProgress;
                     _p.positions[i*3+2] = vertex.z + (nVertex.z-vertex.z) * progress + vertex.rz * __tweenObj.randomProgress;
+
+                    //_p.positions[i*3] = vertex.x + vertex.rx * __tweenObj.randomProgress;
+                    //_p.positions[i*3+1] = vertex.y + vertex.ry * __tweenObj.randomProgress;
+                    //_p.positions[i*3+2] = vertex.z + vertex.rz * __tweenObj.randomProgress;
                 }
 
                 _geometry.drawcalls[0].count = maxPointCount;
@@ -1114,7 +1128,7 @@
                     var dist = Math.sqrt( dx * dx + dy * dy + dz * dz );
 
 
-                    if ( dist < minDistance )
+                    if ( dist < minDistance && dist > 5 )
                     {
 
                         var alpha = 1.0 - dist / minDistance;
