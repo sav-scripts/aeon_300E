@@ -1,3 +1,81 @@
+(function(){
+
+    var _p = window.WGHelper = {};
+
+    _p.load = function(_useServerData, list, cb)
+    {
+        var index = 0;
+
+        loadOne();
+
+        var data, id;
+
+        function loadOne()
+        {
+            if(index >= list.length)
+            {
+                loadComplete();
+                return;
+            }
+
+            id = list[index].id;
+
+            if(_useServerData)
+            {
+                loadFile(list[index].url);
+            }
+            else
+            {
+                data = JSON.parse(localStorage.getItem(id));
+                loadImage();
+            }
+        }
+
+        function loadImage()
+        {
+            var img = document.createElement("img");
+            img.onload = function()
+            {
+                WireGraphic.addData(id, data, img);
+                index ++;
+                loadOne();
+            };
+
+
+            img.src = data.image_src;
+
+        }
+
+        function loadFile(url)
+        {
+            //console.log("load url: " + url);
+            $.ajax(
+                {
+                    url:url + "?v=" + new Date().getTime()
+                }
+            ).done(function(response)
+                {
+                    data = JSON.parse(response);
+                    loadImage();
+
+                }).fail(function(event)
+                {
+                    console.log("load fail: " + event);
+                });
+        }
+
+        function loadComplete()
+        {
+            WireGraphic.init();
+            cb.apply();
+
+        }
+    };
+
+}());
+
+
+
 (function (){
 
     var __graphicDic = {};
@@ -39,25 +117,17 @@
 
         var _isInit = false;
 
+        var _isRendering = false;
+
         _p.init = function ()
         {
-            //_data = data;
-
-
-            //_image = image;
-
             _width = $(window).width();
             _height = $(window).height();
-
-            //_width = image.width;
-            //_height = image.height;
 
             _scene = new THREE.Scene();
 
             _container = new THREE.Object3D();
-            //_container.position.x = -_width * .5;
-            //_container.position.y = _height * .5;
-            //_container.rotation.x = -Math.PI;
+            _container.frustumCulled = false;
 
             _scene.add(_container);
 
@@ -82,10 +152,8 @@
             _renderer.domElement.className = "three_canvas";
 
 
-            //$("#main_container").append(_renderer.domElement);
             $("body").append(_renderer.domElement);
             _renderer.domElement.id = "main_canvas";
-            //$doms.canvas.css("position", "absolute").css("z-index", 1);
 
             /*
             BaseMap.init();
@@ -109,6 +177,10 @@
 
             _isInit = true;
 
+            //
+
+            _p.setRendering(false);
+
 
             render();
 
@@ -116,10 +188,18 @@
             {
                 requestAnimationFrame(render);
 
-                //RandomLine.update();
+                if(_isRendering)
+                {
+                    _renderer.render(_scene, _camera);
+                }
 
-                _renderer.render(_scene, _camera);
             }
+        };
+
+        _p.setRendering = function(b)
+        {
+            _isRendering = b;
+            $(_renderer.domElement).css("display", b?"block":"none");
         };
 
         _p.getData = function(id)
@@ -140,21 +220,12 @@
                 rawData:data.graphic_data,
                 image:image,
                 texture:texture,
-                segmentCount: data.graphic_data.line_list.length
+                segmentCount: data.graphic_data.line_list.length,
+                width:image.width,
+                height:image.height
             };
 
             PointLayer.addData(id);
-            //PolygonLayer.addData(id);
-        };
-
-        _p.rePosition = function(left, top)
-        {
-            if(!_isInit) return;
-
-            //_container.position.x = _width*.5 - 400;
-            //_container.position.y = 500;
-            _container.position.x = left;
-            _container.position.y = top;
         };
 
         _p.changeTo = function(id)
@@ -162,8 +233,10 @@
             __currentGraphicId = id;
 
 
-            PointLayer.update();
-            LineLayer.update();
+            //PointLayer.update();
+            //LineLayer.update();
+
+
             //PolygonLayer.update();
 
             //var obj = __graphicDic[id];
@@ -175,92 +248,109 @@
             if(__currentGraphicId == targetId) return;
             if(__nextGraphicId == targetId) return;
 
+
+            _p.setRendering(true);
+
+
+
+            RandomLine.object3D.visible = true;
+
+            __settings.randomPower = setting.randomPower;
+
+            __nextGraphicId = targetId;
+
+            var currentImage = __graphicDic[__currentGraphicId].image;
+            var targetImage = __graphicDic[__nextGraphicId].image;
+
+
+            TweenMax.killTweensOf(__tweenObj);
+            TweenMax.to(currentImage,.5, {autoAlpha:0});
+
             TweenMax.to(PointLayer.object3D.material.uniforms.opacity,.5, {value:1});
-            //TweenMax.to(LineLayer.object3D.material.uniforms.opacity,1, {value:__settings.maxLineAlpha});
             TweenMax.to(LineLayer.object3D.material.uniforms.opacity,.5, {value:0, onComplete:null},.5);
 
-            nextStep();
 
 
-            function nextStep()
+            __tweenObj.left = _container.position.x;
+            __tweenObj.top = _container.position.y;
+
+            __tweenObj.progress = 0;
+
+            var defaultDuration = 4.8;
+            var duration = defaultDuration;
+
+            if(setting && setting.duration)
             {
+                duration = setting.duration;
+            }
+            var ds = duration / defaultDuration;
 
-                RandomLine.object3D.visible = true;
-
-                __settings.randomPower = setting.randomPower;
-
-                __nextGraphicId = targetId;
-
-                var currentImage = __graphicDic[__currentGraphicId].image;
-                var targetImage = __graphicDic[__nextGraphicId].image;
+            var tl = new TimelineMax();
+            tl.to(__tweenObj, 1.5*ds, {progress:.5, ease:setting.outFunc, onUpdate:onProgressUpdate});
+            tl.to(__tweenObj, 2*ds, {progress:.6, ease:Linear.easeNone, onUpdate:onProgressUpdate});
+            tl.to(__tweenObj,1.3*ds, {progress:1, ease:setting.inFunc, onUpdate:onProgressUpdate});
 
 
-                TweenMax.to(currentImage,.5, {autoAlpha:0});
-
-                TweenMax.killTweensOf(__tweenObj);
-
-                __tweenObj.polygonChanged = false;
-                __tweenObj.left = _container.position.x;
-                __tweenObj.top = _container.position.y;
-
+            tl.add(function()
+            {
                 __tweenObj.progress = 0;
 
-                var hLeft = currentImage.offset.left + (targetImage.offset.left - currentImage.offset.left) * .5;
-                var hTop = currentImage.offset.top + (targetImage.offset.top - currentImage.offset.top) * .5;
+                RandomLine.object3D.visible = false;
 
-                var hLeft2 = currentImage.offset.left + (targetImage.offset.left - currentImage.offset.left) * .6;
-                var hTop2 = currentImage.offset.top + (targetImage.offset.top - currentImage.offset.top) * .6;
+                _p.changeTo(targetId);
 
-                var ds = 1;
+            });
 
-                var tl = new TimelineMax();
-                tl.to(__tweenObj, 1.5*ds, {progress:.5, ease:setting.outFunc, left:hLeft, top:hTop, onUpdate:onProgressUpdate});
-                tl.to(__tweenObj, 2*ds, {progress:.6, ease:Linear.easeNone, left:hLeft2, top:hTop2, onUpdate:onProgressUpdate});
-                tl.to(__tweenObj,1.3*ds, {progress:1, ease:setting.inFunc, left:targetImage.offset.left, top:targetImage.offset.top, onUpdate:onProgressUpdate});
+            tl.set(targetImage, {autoAlpha:0}, "+=.2");
+            tl.to(PointLayer.object3D.material.uniforms.opacity,.7, {value:0});
+            tl.to(LineLayer.object3D.material.uniforms.opacity,.7, {value:0}, "-=.7");
+            tl.to(targetImage,.5, {autoAlpha:1}, "-=.7");
 
+            tl.add(function()
+            {
+                __nextGraphicId = null;
+                _p.setRendering(false);
+                if(cb) cb.apply();
+            });
+        };
 
-                tl.add(function()
-                {
-                    __tweenObj.progress = 0;
-                    __nextGraphicId = null;
+        _p.updatePosition = function()
+        {
+            var g1 = __graphicDic[__currentGraphicId],
+                g2 = __graphicDic[__nextGraphicId];
 
-                    RandomLine.object3D.visible = false;
-
-                    _p.changeTo(targetId);
-
-
-
-
-                    //PolygonLayer.object3D.visible = true;
-                    //PolygonLayer.object3D.material.uniforms.opacity.value = 0;
-                    //TweenMax.to(PolygonLayer.object3D.material.uniforms.opacity,.5, {value:1});
-
+            if(g2)
+            {
+                _container.position.x = g1.image.offset.left + (g2.image.offset.left - g1.image.offset.left) * __tweenObj.progress;
+                _container.position.y = g1.image.offset.top + (g2.image.offset.top - g1.image.offset.top) * __tweenObj.progress;
 
 
-
-                    TweenMax.delayedCall(.5, function()
-                    {
-                        TweenMax.to(PointLayer.object3D.material.uniforms.opacity,.7, {value:0});
-                        TweenMax.to(LineLayer.object3D.material.uniforms.opacity,.7, {value:0});
-
-                        //PolygonLayer.breakOut(cb);
-                        TweenMax.set(targetImage, {autoAlpha:0});
-                        TweenMax.to(targetImage,.5, {autoAlpha:1});
-
-                        if(cb) cb.apply();
-                    });
-
-                });
-
-
+                _container.scale.x = g1.image.width / g1.width + (g2.image.width / g2.width - g1.image.width / g1.width) * __tweenObj.progress;
+                _container.scale.y = g1.image.height / g1.height + (g2.image.height / g2.height - g1.image.height / g1.height) * __tweenObj.progress;
             }
+            else
+            {
+                _container.position.x = g1.image.offset.left;
+                _container.position.y = g1.image.offset.top;
+
+                _container.scale.x = g1.image.width / g1.width;
+                _container.scale.y = g1.image.height / g1.height;
+
+                //console.log(currentImage.width);
+            }
+
+
+            //_container.position.x = __tweenObj.left;
+            //_container.position.y = __tweenObj.top;
         };
 
         function onProgressUpdate()
         {
+            _p.updatePosition();
+
             __tweenObj.randomProgress = (.5 - Math.abs(.5 - __tweenObj.progress))/.5 * __settings.randomPower;
 
-            var fadeMark = __settings.fadeMark, needUpdatePolygon = false;
+            var fadeMark = __settings.fadeMark;
 
             if(__tweenObj.progress <= fadeMark)
             {
@@ -269,29 +359,13 @@
             else if(__tweenObj.progress >= (1-fadeMark))
             {
                 __tweenObj.fadeProgress = (1-__tweenObj.progress)/fadeMark;
-                //needUpdatePolygon = true;
             }
             else __tweenObj.fadeProgress = 1;
 
             __tweenObj.antiFadeProgress = 1 - __tweenObj.fadeProgress;
 
-
-            if(__tweenObj.progress > (1-fadeMark) && __tweenObj.polygonChanged == false)
-            {
-                __tweenObj.polygonChanged = true;
-                //PolygonLayer.changeColors(__nextGraphicId);
-
-            }
-            _container.position.x = __tweenObj.left;
-            _container.position.y = __tweenObj.top;
-
             PointLayer.update();
             LineLayer.update();
-            //if(needUpdatePolygon)
-            //{
-                //PolygonLayer.object3D.visible = true;
-                //PolygonLayer.update();
-            //}
         }
 
         _p.getCurrentId = function(){ return __currentGraphicId; };
@@ -311,6 +385,8 @@
             _camera.right = _width;
             _camera.top = 0;
             _camera.bottom = _height;
+            _camera.near = 1000;
+            _camera.far = -1000;
 
 
             _camera.updateProjectionMatrix();
@@ -427,6 +503,7 @@
             });
 
             _p.object3D = new THREE.PointCloud(_geometry, _material);
+            _p.object3D.frustumCulled = false;
 
         };
 
@@ -557,7 +634,7 @@
 
         var _p = window.LineLayer = {};
 
-        var _positions, _colors, _alphas, _lineList, _segmentCount;
+        var _positions;
 
         var _geometry, _material;
 
@@ -584,6 +661,7 @@
             generateGeometry();
 
             _p.object3D = new THREE.Line( _geometry, _material, THREE.LinePieces );
+            _p.object3D.frustumCulled = false;
 
 
 
@@ -644,6 +722,12 @@
                 return;
             }
 
+            if(!graphicData)
+            {
+                console.log(__currentGraphicId);
+                console.log(__nextGraphicId);
+                return;
+            }
 
             var lineList = graphicData.rawData.line_list;
             var pointDic = graphicData.pointDic;
@@ -1070,6 +1154,7 @@
             generateGeometry();
 
             _p.object3D = new THREE.Line( _geometry, _material, THREE.LinePieces);
+            _p.object3D.frustumCulled = false;
 
             _isInit = true;
         };

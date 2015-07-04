@@ -9,6 +9,11 @@ html, body{
     height: 100%;
     overflow: hidden;
 }
+.with_bg{
+
+    background: url(../images/index_bg_1920.jpg) center center;
+    background-size: cover;
+}
 
 .graphic_image{
     position: absolute;

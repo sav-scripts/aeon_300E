@@ -198,6 +198,16 @@
 
         $doms.buttonContainer = Helper.$extract("#big_menu_block .button_group");
 
+        $(".link_info").bind("click", function()
+        {
+            window.open("http://www.aeonmotor.com.tw/procolor.php?kind=11", "_blank");
+        });
+
+        $(".link_download").bind("click", function()
+        {
+           window.open("http://www.aeonmotor.com.tw/files/1434070511786645.pdf", "_blank");
+        });
+
 
         setupTrigger();
 
@@ -227,7 +237,7 @@
 
             var $redLine = $(dom);
 
-            $redLine.css("top", $button.position().top + 32);
+            $redLine.css("top", $button.position().top + 22);
 
             $doms.buttonContainer.append($redLine);
 
@@ -245,7 +255,7 @@
 
             $button.show = function()
             {
-                TweenMax.to($redLine,.5, {width:128, marginLeft:-64});
+                TweenMax.to($redLine,.5, {width:90, marginLeft:-45});
             };
 
             $button.hide = function()
@@ -291,11 +301,11 @@
                 TweenMax.killTweensOf($doms.bar3);
                 TweenMax.killTweensOf($doms.bar4);
 
-                TweenMax.to($doms.bar1,.4, {ease:Power1.easeIn, top:$doms.bar2[0].init.t});
-                TweenMax.to($doms.bar3,.4, {ease:Power1.easeIn, top:$doms.bar2[0].init.t});
+                TweenMax.to($doms.bar1,.3, {ease:Power1.easeIn, top:$doms.bar2[0].init.t});
+                TweenMax.to($doms.bar3,.3, {ease:Power1.easeIn, top:$doms.bar2[0].init.t});
 
                 TweenMax.set($doms.bar4, {top:$doms.bar2[0].init.t, height:6});
-                TweenMax.to($doms.bar4,.4, {delay:.3, top:$doms.bar4[0].init.t, height:$doms.bar4[0].init.h});
+                TweenMax.to($doms.bar4,.3, {delay:.2, top:$doms.bar4[0].init.t, height:$doms.bar4[0].init.h});
 
             }
 
@@ -313,11 +323,11 @@
                 TweenMax.killTweensOf($doms.bar3);
                 TweenMax.killTweensOf($doms.bar4);
 
-                TweenMax.to($doms.bar4,.4, {ease:Power1.easeIn, top:$doms.bar2[0].init.t, height:6});
+                TweenMax.to($doms.bar4,.3, {ease:Power1.easeIn, top:$doms.bar2[0].init.t, height:6});
 
                 //TweenMax.to($doms.bar1,.5, {rotation:0});
-                TweenMax.to($doms.bar1,.4, {delay:.3, top:$doms.bar1[0].init.t});
-                TweenMax.to($doms.bar3,.4, {delay:.3, top:$doms.bar3[0].init.t});
+                TweenMax.to($doms.bar1,.3, {delay:.2, top:$doms.bar1[0].init.t});
+                TweenMax.to($doms.bar3,.3, {delay:.2, top:$doms.bar3[0].init.t});
             }
 
             _p.triggerMouseOver = onMouseOver;
@@ -390,7 +400,7 @@
 
         }});
 
-        TweenMax.set($doms.bar4, {top:$doms.bar2[0].init.t, height:6});
+        TweenMax.to($doms.bar4,.3, {top:$doms.bar2[0].init.t, height:6});
 
     };
 
@@ -419,8 +429,8 @@
 
 
         //TweenMax.to($doms.bar1,.5, {rotation:0});
-        TweenMax.to($doms.bar1,.4, {top:$doms.bar1[0].init.t});
-        TweenMax.to($doms.bar3,.4, {top:$doms.bar3[0].init.t});
+        TweenMax.to($doms.bar1,.4, {delay:.4, top:$doms.bar1[0].init.t});
+        TweenMax.to($doms.bar3,.4, {delay:.4, top:$doms.bar3[0].init.t});
 
     };
 
