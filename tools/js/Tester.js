@@ -151,22 +151,34 @@
 
         var targetId = _currentId == "data"? "data2": "data";
 
+
+        var currentImage = WireGraphic.getData(_currentId).image;
+        var targetImage = WireGraphic.getData(targetId).image;
+
         var func1 = funcDic[_datguiObj.out_tween][_datguiObj.out_ease];
         var func2 = funcDic[_datguiObj.in_tween][_datguiObj.in_ease];
 
-        WireGraphic.tweenTo(targetId,
-            {
-                duration:_datguiObj.duration,
-                outFunc: func1,
-                inFunc: func2,
-                randomPower: _datguiObj.randomPower
-            }, function()
+        TweenMax.to(currentImage,.5, {autoAlpha:0});
+
+
+
+        WireGraphic.tweenTo(_currentId, targetId,
         {
-            //_p.changeTo(targetId);
-
+            d1:_datguiObj.duration *.25,
+            d2:_datguiObj.duration *.4,
+            d3:_datguiObj.duration *.25,
+            d4:_datguiObj.duration *.1,
+            outFunc: func1,
+            inFunc: func2,
+            randomPower: _datguiObj.randomPower
+        }, function()
+        {
+            TweenMax.to(targetImage,.5, {autoAlpha:1});
+        }, function()
+        {
             _currentId = targetId;
-
             _isPlaying = false;
+
         });
     }
 
@@ -180,13 +192,19 @@
         //WireGraphic.getData("data").image.width = 100;
         //WireGraphic.getData("data").image.height = 200;
 
-        updateImage(WireGraphic.getData("data").image, -200);
-        updateImage(WireGraphic.getData("data2").image, 200);
+        updateImage("data", -200);
+        updateImage("data2", 200);
 
-        function updateImage(image, xOffset)
+        function updateImage(id, xOffset)
         {
+            var data = WireGraphic.getData(id);
+            var image = data.image;
             $(image).css("left", width *.5 - image.width *.5 + xOffset).css("top", height *.5-image.height *.5);
-            image.offset = $(image).offset();
+            //image.offset = $(image).offset();
+            var offset = $(image).offset();
+            //data.top = offset.top;
+            //data.left = offset.left;
+            WireGraphic.updateDataGeom(id, offset.left, offset.top);
         }
 
 

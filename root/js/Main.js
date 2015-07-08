@@ -15,22 +15,30 @@
 
     var _isAlerted = false;
 
+    _p.rawWidth = 1920;
+    _p.rawHeight = 1040;
+
     var _currentId;
 
     var _wgDic =
     {
         "/Index": {url:"data/index.txt"},
-        "/Brand": {url:"data/brand.txt"}
+        "/Brand": {url:"data/brand.txt"},
+        "/Feature": {url:"data/feature_1.txt"}
     };
 
     var _wgSetting =
     {
-
-        duration:3,
+        d1:.75,
+        d2:1.2,
+        d3:.75,
+        d4:.5,
         outFunc: Power2.easeIn,
         inFunc: Power1.easeInOut,
         randomPower: 1
     };
+
+    _wgSetting.duration = _wgSetting.d1 + _wgSetting.d2 + _wgSetting.d3 + _wgSetting.d4;
 
     if(window.orientation == undefined) _isAlerted = true;
 
@@ -65,18 +73,25 @@
                     var img = WireGraphic.getData(id).image;
 
 
-                    $(img).css("display", "block").css("position", "absolute");
+                    //$(img).css("display", "block").css("position", "absolute");
+                    //TweenMax.set(img, {autoAlpha:0});
+
+                    /*
                     $("body").append(img);
-                    TweenMax.set(img, {autoAlpha:0});
 
 
                     if(i == 1)
                     {
                         $(img).css("left", 100).css("top", "50%");
 
-                        img.offset = $(img).offset();
+                        //img.offset = $(img).offset();
+
+                        var offset = $(img).offset();
+
+                        WireGraphic.updateDataGeom("/Brand", offset.left, offset.top);
 
                     }
+                    */
                 }
 
 
@@ -102,6 +117,7 @@
     function buildContent()
     {
         Index.init();
+        Brand.init();
         Feature.init();
         SmallMenu.init();
         Menu.init();
@@ -223,7 +239,15 @@
         //alert(window.orientation);
     }
 
-
+    _p.triggerCbAfterChange = function()
+    {
+        if(_cbAfterToBlock != null)
+        {
+            var func = _cbAfterToBlock;
+            _cbAfterToBlock = null;
+            func.apply();
+        }
+    };
 
     _p.toBlock = function(hashName)
     {
@@ -263,6 +287,8 @@
             firstIn: false
         };
 
+        var tl;
+
 
         if(_currentHash == null)
         {
@@ -284,18 +310,15 @@
             $(currentObj.block).css("display", "block");
             $(targetObj.block).css("display", "block");
 
+            _p.onResize();
+
 
             if(currentObj.stageClass && currentObj.stageClass.beforeStageOut) currentObj.stageClass.beforeStageOut(options);
             if(targetObj.stageClass && targetObj.stageClass.beforeStageIn) targetObj.stageClass.beforeStageIn(options);
 
-            WireGraphic.tweenTo(hashName, _wgSetting);
-
-
-            _isPlaying = true;
-
             var scrollStart = 1.3;
 
-            var tl = new TimelineMax;
+            tl = new TimelineMax;
 
             if(targetObj.index > currentObj.index)
             {
@@ -314,24 +337,44 @@
                 tl.to(targetObj.block, 1, {ease:Power1.easeInOut, bottom:0}, "-=1");
             }
 
+
+            var endStart = _wgSetting.d1 + _wgSetting.d2 + _wgSetting.d3;
+
+
             tl.add(function()
             {
-                _isPlaying = false;
-
+                options.onComplete = complete;
                 if(currentObj.stageClass && currentObj.stageClass.afterStageOut) currentObj.stageClass.afterStageOut(options);
                 if(targetObj.stageClass && targetObj.stageClass.afterStageIn) targetObj.stageClass.afterStageIn(options);
+
+            }, endStart);
+
+            //if(!(targetObj.stageClass && targetObj.stageClass.afterStageIn))
+            //{
+            //    tl.add(complete, _wgSetting.duration + .2);
+            //}
+
+            function complete()
+            {
+
+                _isPlaying = false;
 
                 $(currentObj.block).css("display", "none");
 
                 $("#logo").toggleClass("lighten", (_currentHash != "/Index"));
 
-                if(_cbAfterToBlock != null)
-                {
-                    var func = _cbAfterToBlock;
-                    _cbAfterToBlock = null;
-                    func.apply();
-                }
-            });
+               _p.triggerCbAfterChange();
+            }
+
+            var startData = currentObj.stageClass.getWgData();
+            var targetData = targetObj.stageClass.getWgData();
+
+            _wgSetting.startBound = startData;
+            _wgSetting.targetBound = targetData;
+
+            WireGraphic.tweenTo(startData.id, targetData.id, _wgSetting);
+
+            _isPlaying = true;
 
             _currentHash = hashName;
 
@@ -345,6 +388,8 @@
             $(currentObj.block).css("display", "block");
             $(targetObj.block).css("display", "block");
 
+            _p.onResize();
+
 
             if(currentObj.stageClass && currentObj.stageClass.beforeStageOut) currentObj.stageClass.beforeStageOut(options);
             if(targetObj.stageClass && targetObj.stageClass.beforeStageIn) targetObj.stageClass.beforeStageIn(options);
@@ -352,7 +397,7 @@
 
             _isPlaying = true;
 
-            var tl = new TimelineMax;
+            tl = new TimelineMax;
 
             if(targetObj.index > currentObj.index)
             {
@@ -382,12 +427,7 @@
 
                 $("#logo").toggleClass("lighten", (_currentHash != "/Index"));
 
-                if(_cbAfterToBlock != null)
-                {
-                    var func = _cbAfterToBlock;
-                    _cbAfterToBlock = null;
-                    func.apply();
-                }
+                _p.triggerCbAfterChange();
             });
 
             _currentHash = hashName;
@@ -412,10 +452,13 @@
         var width = _stageWidth = Main.stageWidth = $(window).width();
         var height = _stageHeight = Main.stageHeight = $(window).height();
 
-        Index.onResize(width, height);
-        Feature.onResize(width, height);
-        SmallMenu.onResize(width, height);
-        Menu.onResize(width, height);
+        var bgBound = Helper.getSize_cover(width, height, _p.rawWidth, _p.rawHeight);
+
+        Index.onResize(width, height, bgBound);
+        Brand.onResize(width, height, bgBound);
+        Feature.onResize(width, height, bgBound);
+        SmallMenu.onResize(width, height, bgBound);
+        Menu.onResize(width, height, bgBound);
 
     };
 

@@ -276,7 +276,7 @@
             {
                 loadImg(event.target.result, function()
                 {
-                    //CanvasHandler.clear();
+                    CanvasHandler.clear();
                 });
             };
 

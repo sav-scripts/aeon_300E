@@ -4,29 +4,76 @@
     var _p = window.Feature = {};
     var $doms = {};
 
-    var _currentIndex = 1;
+    var _currentIndex = -1;
     var _numContents = 4;
+
+    var _firstIndex = 1;
 
     var _offsetDic =
     {
-        1:.6,
-        2:.2,
-        3:.8,
-        4:.4
-    }
+        1:null,
+        2:null,
+        3:null,
+        4:null
+    };
 
     _p.init = function ()
     {
         $doms.container = $("#feature_block");
 
-        setupContent(1);
+        setupContent(1, true);
         setupContent(2);
         setupContent(3);
         setupContent(4);
 
-        function setupContent(index)
+
+
+
+        function setupContent(index, isFeature1)
         {
             var $dom = $doms["feature_" + index] = $doms.container.find(".feature_" + index);
+
+            var positionPercent = $dom.position().left / $dom.parent().width() * 100;
+
+            _offsetDic[index] = positionPercent / 100;
+
+            Helper.getInitValue($dom[0]);
+            var v = $dom[0].init;
+
+            var image;
+
+            if(isFeature1)
+            {
+                image = WireGraphic.getData("/Feature").image;
+            }
+            else
+            {
+                image = new Image();
+                image.src = WireGraphic.getData("/Index").image.src;
+            }
+
+            $dom.find(".feature_bike").parent().append(image);
+            $dom.find(".feature_bike").detach();
+
+            image.className = "feature_bike";
+
+
+            var $bike = $dom.$bike = $dom.find(".feature_bike");
+            Helper.pxToPercent($bike[0], v.w, v.h);
+
+            var $desc = $dom.find(".description");
+            Helper.pxToPercent($desc[0], v.w, v.h);
+
+            var $bigDot = $dom.find(".dot_big");
+            Helper.pxToPercent($bigDot[0], v.w, v.h);
+
+            var $smallDot = $dom.find(".dot_small");
+            Helper.pxToPercent($smallDot[0], v.w, v.h, {"left":true, "top":false});
+
+            var $line = $dom.find(".dot_line");
+            Helper.pxToPercent($line[0], v.w, v.h);
+
+            $dom.vv = new Vivus('dot_line_' + index, {type: 'delayed', duration: 50, start:"manual", animTimingFunction: Vivus.EASE_IN});
 
             $dom.css("visibility", "visible");
 
@@ -40,12 +87,12 @@
             }
         }
 
-        SvgMaskLayer.init();
-        SvgMaskLayer.onResize();
-        SvgMaskLayer.updatePosition(_offsetDic[1], true);
+        SvgMaskLayer.init(_offsetDic[1]);
+        //SvgMaskLayer.onResize();
+        //SvgMaskLayer.updatePosition(_offsetDic[1], true);
     };
 
-    _p.toContent = function(index, updateNow)
+    _p.toContent = function(index, updateNow, cb)
     {
 
         if(index == _currentIndex) return;
@@ -69,6 +116,22 @@
         //    Main.setPlaying(false);
         //}});
 
+
+
+        if(_currentIndex != -1)
+        {
+            var $old = $doms["feature_" + _currentIndex];
+            $old.css("display", "none");
+            $old.vv.stop();
+        }
+
+        var $new = $doms["feature_" + index];
+
+        $new.css("display", "block");
+
+        $new.vv.reset();
+
+
         Main.setPlaying(true);
 
 
@@ -76,8 +139,10 @@
 
         SvgMaskLayer.toPercent(_offsetDic[index],function()
         {
-
+            $new.vv.play();
             Main.setPlaying(false);
+            if(cb) cb.apply();
+
         }, updateNow);
 
     };
@@ -92,7 +157,10 @@
         }
         else
         {
-            _p.toContent(targetIndex);
+            _p.toContent(targetIndex, false, function()
+            {
+                Main.triggerCbAfterChange();
+            });
 
             return true;
         }
@@ -100,17 +168,210 @@
 
     _p.beforeStageIn = function()
     {
-        _p.toContent(1, true);
+        _p.toContent(_firstIndex, true);
     };
 
-    _p.onResize = function (width, height)
+    _p.afterStageIn = function(options)
+    {
+        SvgMaskLayer.play();
+
+        if(options && options.onComplete)
+        {
+            TweenMax.delayedCall(.6, options.onComplete);
+        }
+    };
+
+    _p.beforeStageOut = function()
+    {
+        SvgMaskLayer.pause();
+    };
+
+    _p.afterStageOut = function()
+    {
+        SvgMaskLayer.pause();
+    };
+
+
+    _p.getWgData = function()
+    {
+        var $bike = $doms["feature_" + _currentIndex].$bike;
+
+        var offset = $bike.offset();
+        var containerOffset = $doms.container.offset();
+
+        var id;
+
+        if(_currentIndex == 1)
+        {
+            id = "/Feature"
+        }
+        else
+        {
+            id = "/Index"
+        }
+
+        var gData = WireGraphic.getData(id);
+
+        var rawWidth = gData.rawWidth;
+        var rawHeight = gData.rawHeight;
+
+        var obj = {};
+        obj.left = offset.left;
+        obj.top = offset.top - containerOffset.top;
+        obj.scaleX = $bike.width() / rawWidth;
+        obj.scaleY = $bike.height() / rawHeight;
+
+        obj.id = id;
+
+        return obj;
+    };
+
+    _p.onResize = function (width, height, bgBound)
     {
         SvgMaskLayer.onResize(width, height);
+
+
+        Helper.applyTransform($doms.feature_1[0], bgBound.ratio, ["w", "h"]);
+        Helper.applyTransform($doms.feature_2[0], bgBound.ratio, ["w", "h"]);
+        Helper.applyTransform($doms.feature_3[0], bgBound.ratio, ["w", "h"]);
+        Helper.applyTransform($doms.feature_4[0], bgBound.ratio, ["w", "h"]);
     };
 
 }());
 
 
+
+(function(){
+
+    var _p = window.SvgMaskLayer = {};
+
+    var _width, _height;
+    var _currentCenter = .5;
+    var _rawTextureWidth = 576,
+        _rawTextureCenter = 555,
+        _textureWidth = _rawTextureWidth,
+        _textureCenter = _rawTextureCenter;
+
+    var _startIndex = 1, _endIndex = 6, _currentIndex = 1;
+
+    _p.center = _currentCenter;
+
+    var _tl;
+
+    var $doms = {};
+
+    _p.init = function(centerPercent)
+    {
+        $doms.container = $(".parallelogram");
+
+        _currentCenter = centerPercent;
+
+        $doms.shapes = $doms.container.children("g");
+
+        //console.log($doms.shapes.length);
+
+
+
+
+        var i, duration = .6, gap = .2;
+
+        for(i=_startIndex;i<=_endIndex;i++)
+        {
+            var $dom = $($doms.shapes[i]);
+            //$dom.css("display", "none");
+
+            TweenMax.set($dom, {autoAlpha:0});
+
+            //_tl.to($dom, duration, {autoAlpha:1, ease:Power1.easeIn}, gap*count);
+            //_tl.to($dom, duration, {autoAlpha:0, ease:Power1.easeOut}, duration + gap*count);
+
+            //count ++;
+        }
+
+        _tl = new TimelineMax({paused:true, repeat:-1});
+
+        _tl.add(function()
+        {
+            var $dom = $($doms.shapes[_currentIndex]);
+            TweenMax.to($dom, duration, {autoAlpha:1, ease:Power1.easeOut});
+            TweenMax.to($dom, duration, {delay:duration, autoAlpha:0, ease:Power1.easeIn});
+
+            _currentIndex ++;
+            if(_currentIndex > _endIndex) _currentIndex = _startIndex;
+        },gap);
+
+    };
+
+    _p.toPercent = function(centerPercent, cb, updateNow)
+    {
+        var duration = .6;
+
+
+        _currentCenter = centerPercent;
+
+        if(updateNow)
+        {
+            _p.center = _currentCenter;
+            _p.update();
+            if(cb) cb.apply();
+        }
+        else
+        {
+            TweenMax.killTweensOf(_p);
+            TweenMax.to(_p, duration, {center:_currentCenter, onUpdate:_p.update, onComplete:cb});
+        }
+
+    };
+
+    /*
+    _p.updatePosition = function(centerPercent, updateNow)
+    {
+        _currentCenter = centerPercent;
+        _p.up
+    };
+    */
+
+    _p.play = function()
+    {
+        //_tl.resume();
+    };
+
+    _p.pause = function()
+    {
+        _tl.pause();
+    };
+
+    _p.update = function()
+    {
+        $doms.container.css("left", _width * _p.center - _textureCenter);
+    };
+
+
+    _p.onResize = function (width, height, bgBound)
+    {
+        if(!width && !height)
+        {
+            width = $(window).width();
+            height = $(window).height();
+        }
+
+        _width = width;
+        _height = height;
+
+        var ratio = _height / Main.rawHeight;
+        $doms.container.attr("height", _height);
+        $doms.container.attr("width", Main.rawWidth * ratio);
+
+        _textureWidth = _rawTextureWidth * ratio;
+        _textureCenter = _rawTextureCenter * ratio;
+
+        _p.update();
+    };
+
+}());
+
+
+/*
 (function(){
 
     var _p = window.SvgMaskLayer = {};
@@ -231,3 +492,4 @@
     };
     
 }());
+*/

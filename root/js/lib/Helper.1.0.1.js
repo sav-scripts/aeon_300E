@@ -77,8 +77,19 @@
         return $(dom);
     };
 
-    Helper.pxToPercent = function (dom, parentWidth, parentHeight)
+    Helper.pxToPercent = function (dom, parentWidth, parentHeight, styleDic)
     {
+        if(!styleDic) styleDic =
+        {
+            "width":true,
+            "height":false,
+            "left":true,
+            "top":false,
+            "right":true,
+            "bottom":false
+        };
+
+        /*
         process("width", parentWidth);
         process("left", parentWidth);
         process("right", parentWidth);
@@ -86,6 +97,14 @@
         process("height", parentHeight);
         process("top", parentHeight);
         process("bottom", parentHeight);
+        */
+
+        var key;
+        for(key in styleDic)
+        {
+            var value = (styleDic[key] == true)? parentWidth: parentHeight;
+            process(key, value);
+        }
 
         function process(cssName, pValue, rate)
         {
@@ -95,38 +114,52 @@
         }
     };
 
-    Helper.getInitValue = function (dom)
+
+
+    Helper.getInitValue = function (dom, ignoreDefault, extraStyles)
     {
         var init = dom.init = {};
         var geom = dom.geom = {};
 
-        if (dom.currentStyle)
+        if(!ignoreDefault)
         {
-            geom.w = init.w = getValue(dom.currentStyle.width);
-            geom.h = init.h = getValue(dom.currentStyle.height);
-            geom.ml = init.ml = getValue(dom.currentStyle.marginLeft);
-            geom.mt = init.mt = getValue(dom.currentStyle.marginTop);
-            geom.mr = init.mr = getValue(dom.currentStyle.marginRight);
-            geom.mb = init.mb = getValue(dom.currentStyle.marginBottom);
-            geom.t = init.t = getValue(dom.currentStyle.top);
-            geom.l = init.l = getValue(dom.currentStyle.left);
-            geom.r = init.r = getValue(dom.currentStyle.right);
-            geom.b = init.b = getValue(dom.currentStyle.bottom);
-            geom.scale = init.scale = 1;
+            if (dom.currentStyle)
+            {
+                geom.w = init.w = getValue(dom.currentStyle.width);
+                geom.h = init.h = getValue(dom.currentStyle.height);
+                geom.ml = init.ml = getValue(dom.currentStyle.marginLeft);
+                geom.mt = init.mt = getValue(dom.currentStyle.marginTop);
+                geom.mr = init.mr = getValue(dom.currentStyle.marginRight);
+                geom.mb = init.mb = getValue(dom.currentStyle.marginBottom);
+                geom.t = init.t = getValue(dom.currentStyle.top);
+                geom.l = init.l = getValue(dom.currentStyle.left);
+                geom.r = init.r = getValue(dom.currentStyle.right);
+                geom.b = init.b = getValue(dom.currentStyle.bottom);
+            }
+            else
+            {
+                geom.w = init.w = $(dom).width();
+                geom.h = init.h = $(dom).height();
+                geom.ml = init.ml = getValue($(dom).css("margin-left"));
+                geom.mt = init.mt = getValue($(dom).css("margin-top"));
+                geom.mr = init.mr = getValue($(dom).css("margin-right"));
+                geom.mb = init.mb = getValue($(dom).css("margin-bottom"));
+                geom.t = init.t = getValue($(dom).css("top"));
+                geom.l = init.l = getValue($(dom).css("left"));
+                geom.r = init.r = getValue($(dom).css("right"));
+                geom.b = init.b = getValue($(dom).css("bottom"));
+            }
         }
-        else
+        geom.scale = init.scale = 1;
+
+        if(extraStyles)
         {
-            geom.w = init.w = $(dom).width();
-            geom.h = init.h = $(dom).height();
-            geom.ml = init.ml = getValue($(dom).css("margin-left"));
-            geom.mt = init.mt = getValue($(dom).css("margin-top"));
-            geom.mr = init.mr = getValue($(dom).css("margin-right"));
-            geom.mb = init.mb = getValue($(dom).css("margin-bottom"));
-            geom.t = init.t = getValue($(dom).css("top"));
-            geom.l = init.l = getValue($(dom).css("left"));
-            geom.r = init.r = getValue($(dom).css("right"));
-            geom.b = init.b = getValue($(dom).css("bottom"));
-            geom.scale = init.scale = 1;
+            for(var i=0;i<extraStyles.length;i++)
+            {
+                var key = extraStyles[i];
+
+                init[key] = geom[key] = getValue($(dom).css(key));
+            }
         }
 
 //        console.log("width = " + $(dom).css("width"));
@@ -167,8 +200,9 @@
             {
                 key = styleList[i];
                 style = Helper.styleDic[key];
+                if(!style) style = key;
                 dom.geom[key] = dom.init[key] * rate;
-                $(dom).css(style, dom.geom[key]);
+                $(dom).css(style, dom.geom[key] + "px");
             }
         }
 
