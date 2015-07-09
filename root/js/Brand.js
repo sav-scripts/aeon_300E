@@ -64,7 +64,7 @@
         TweenMax.to($doms.bike,.5, {autoAlpha:1});
 
         var d1 = .6;
-        var e1 = Power1.easeOut;
+        var e1 = Power3.easeOut;
 
         var tl = new TimelineMax();
 
@@ -73,8 +73,8 @@
         tl.to($doms.text_3,d1, {ease:e1, x:0, autoAlpha:1},.4);
         tl.to($doms.text_4,d1, {ease:e1, x:0, autoAlpha:1},.6);
 
-        tl.to($doms.centerBlack,.8, {scale:1, ease:Back.easeOut}, "-=.2");
-        tl.to($doms.contentText,.5, {autoAlpha:1}, "-=.4");
+        tl.to($doms.centerBlack,.8, {scale:1, ease:Power3.easeOut});
+        tl.to($doms.contentText,1, {autoAlpha:1}, "-=.0");
         tl.to($doms.triangle,.5, {autoAlpha:1, onComplete:options.onComplete}, "-=.5");
 
     };

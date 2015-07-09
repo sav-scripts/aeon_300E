@@ -200,7 +200,7 @@ body{
     position: absolute;
     width:200px;
     top:0;
-    right:-280px;
+    right:-200px;
     height:100%;
     background: #151515;
     z-index: 0;
@@ -261,7 +261,7 @@ body{
 }
 
 #big_menu_block .menu_button:nth-of-type(9){
-    background-position: 0 -216px;
+    background-position: 0 -288px;
 }
 
 .menu_red_line{
@@ -341,21 +341,72 @@ body{
     top:50%;
     left:50%;
     margin-top: -380px;
-    margin-left: 20px;
+    margin-left: 30px;
+    width: 701px;
+    height: 355px;
+}
+.index_text_2{
+    position: absolute;
+    top:50%;
+    left:50%;
+    margin-top: -30px;
+    margin-left: 150px;
+    width: 466px;
+    height: 75px;
+}
+.index_text_3{
+    position: absolute;
+    top:50%;
+    left:50%;
+    margin-top: 40px;
+    margin-left: -10px;
+    width: 797px;
+    height: 170px;
+    /*display: none;*/
+}
+.index_text_4{
+    position: absolute;
+    top:50%;
+    left:50%;
+    margin-top: 200px;
+    margin-left: -25px;
+    width: 828px;
+    height: 114px;
+    /*display: none;*/
 }
 
 .index_scene_1 .index_text_1{
-    background: url("../images/index_text_1.png");
+    background: url("../images/index_tit0101.png");
     background-size: cover;
-    width: 828px;
-    height: 693px;
+}
+.index_scene_1 .index_text_2{
+    background: url("../images/index_tit0102.png");
+    background-size: cover;
+}
+.index_scene_1 .index_text_3{
+    background: url("../images/index_tit0103.png");
+    background-size: cover;
+}
+.index_scene_1 .index_text_4{
+    background: url("../images/index_tit0104.png");
+    background-size: cover;
 }
 
 .index_scene_2 .index_text_1{
-    background: url("../images/index_text_2.png");
+    background: url("../images/index_tit0201.png");
     background-size: cover;
-    width: 828px;
-    height: 693px;
+}
+.index_scene_2 .index_text_2{
+    background: url("../images/index_tit0202.png");
+    background-size: cover;
+}
+.index_scene_2 .index_text_3{
+    background: url("../images/index_tit0203.png");
+    background-size: cover;
+}
+.index_scene_2 .index_text_4{
+    background: url("../images/index_tit0204.png");
+    background-size: cover;
 }
 
 /** brand **/
@@ -825,7 +876,7 @@ body{
 
 #detail_block .detail_form{
     position: absolute;
-    background: url("../images/detail_txt.png");
+    background: url("../images/detail_txt.png") no-repeat;
     background-size: cover;
     width: 648px;
     height: 679px;

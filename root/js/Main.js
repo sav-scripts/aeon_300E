@@ -31,7 +31,7 @@
     var _wgSetting =
     {
         d1:.75,
-        d2:1.2,
+        d2:.4,
         d3:.75,
         d4:.5,
         outFunc: Power2.easeIn,
@@ -326,7 +326,7 @@
             if(currentObj.stageClass && currentObj.stageClass.beforeStageOut) currentObj.stageClass.beforeStageOut(options);
             if(targetObj.stageClass && targetObj.stageClass.beforeStageIn) targetObj.stageClass.beforeStageIn(options);
 
-            var scrollStart = 1.3;
+            var scrollStart = .3;
 
             tl = new TimelineMax;
 

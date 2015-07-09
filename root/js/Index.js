@@ -11,6 +11,10 @@
 
         var wgImage = WireGraphic.getData("/Index").image;
 
+
+        console.log(wgImage.width);
+        console.log(wgImage.height);
+
         //wgImage.className = ".index_bike";
 
         var $oldBike = $(".index_bike");
@@ -22,10 +26,12 @@
         $doms.bike = Helper.$extract(".index_bike");
         Helper.getInitValue($doms.bike[0]);
 
+
         setupScene(1);
         setupScene(2);
 
         $doms.scene_2.toggleClass("svg-clipped", true);
+        //$doms.scene_2.css("display", "none");
 
 
         function setupScene(index)
@@ -37,7 +43,9 @@
             $scene.background = Helper.$extract(".background", $scene[0]);
 
             $scene.text_1 = Helper.$extract(".index_text_1", $scene[0]);
-            //$scene.text_2 = Helper.$extract(".index_text_2", $scene[0]);
+            $scene.text_2 = Helper.$extract(".index_text_2", $scene[0]);
+            $scene.text_3 = Helper.$extract(".index_text_3", $scene[0]);
+            $scene.text_4 = Helper.$extract(".index_text_4", $scene[0]);
 
             //Helper.getInitValue($doms.background[0]);
 
@@ -66,6 +74,7 @@
             TweenMax.set($doms.text_2,{autoAlpha:1, rotationY:0});
         }
         */
+        TweenMax.set($doms.bike, {autoAlpha:0});
     };
 
     _p.afterStageIn = function(options)
@@ -148,6 +157,9 @@
             var bgDom = $scene.background[0];
             $(bgDom).css("width", bound.width).css("height", bound.height).css("left", (width - bound.width) *.5).css("top", (height - bound.height) *.5);
             Helper.applyTransform($scene.text_1[0], bound.ratio, ["w", "h", "ml", "mt"]);
+            Helper.applyTransform($scene.text_2[0], bound.ratio, ["w", "h", "ml", "mt"]);
+            Helper.applyTransform($scene.text_3[0], bound.ratio, ["w", "h", "ml", "mt"]);
+            Helper.applyTransform($scene.text_4[0], bound.ratio, ["w", "h", "ml", "mt"]);
             //Helper.applyTransform($scene.text_2[0], bound.ratio, ["w", "h", "ml", "mt"]);
         }
 

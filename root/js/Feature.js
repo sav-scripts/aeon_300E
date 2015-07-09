@@ -108,9 +108,11 @@
 
             var twinkle = $dom.twinkle = new TimelineMax({repeat:-1, paused:true});
 
-            twinkle.set($bigDotGlow, {scale:0, alpha:1});
-            twinkle.to($bigDotGlow,.5, {scale:1});
-            twinkle.to($bigDotGlow,.3, {alpha:0},.2);
+            //twinkle.set($bigDotGlow, {scale:0, alpha:1});
+            twinkle.set($bigDotGlow, {alpha:1});
+            //twinkle.to($bigDotGlow,.5, {scale:1});
+            twinkle.to($bigDotGlow,1, {ease:Linear.easeNone, alpha:0});
+            twinkle.to($bigDotGlow,1, {ease:Linear.easeNone, alpha:1});
             //twinkle.to($bigDotGlow,.4, {alpha:0});
 
             $dom.hideChilds = function(instantly, cb)
@@ -169,7 +171,7 @@
                 tl.to($desc,.5, {autoAlpha:1},.2);
 
                 tl.to($bigDotCore,.5,{scale:1, ease:Back.easeOut}, 0);
-                //tl.to($bigDotGlow,.5,{scale:1, ease:Back.easeOut},.2);
+                tl.to($bigDotGlow,.5,{scale:1, ease:Back.easeOut},.2);
                 tl.add(function()
                 {
                     twinkle.restart();

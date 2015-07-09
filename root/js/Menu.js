@@ -384,7 +384,7 @@
 
         $doms.basement.css("display", "block").css("right", $doms.basement[0].init.r);
 
-        TweenMax.to($doms.basement[0],.7, {ease:Power1.easeInOut, right:0});
+        TweenMax.to($doms.basement[0],1, {ease:Power4.easeInOut, right:0});
 
         TweenMax.to($doms.trigger,.5, {ease:Power1.easeOut, delay:.3, right:$doms.basement[0].init.w - 50 });
 
@@ -416,7 +416,7 @@
 
         TweenMax.to($doms.trigger,.5, {ease:Power1.easeOut, right:$doms.trigger[0].init.r});
 
-        TweenMax.to($doms.basement[0],.7, {ease:Power1.easeInOut, right:$doms.basement[0].init.r, onComplete:function()
+        TweenMax.to($doms.basement[0],1, {ease:Power4.easeInOut, right:$doms.basement[0].init.r, onComplete:function()
         {
             $doms.basement.css("display", "none");
             _isPlaying = false;
