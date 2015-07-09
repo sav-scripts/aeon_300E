@@ -8,8 +8,6 @@
     _p.init = function ()
     {
         $doms.container = $("#index_block");
-        $doms.background = Helper.$extract("#index_block .background");
-
 
         var wgImage = WireGraphic.getData("/Index").image;
 
@@ -22,22 +20,35 @@
         wgImage.className = "index_bike";
 
         $doms.bike = Helper.$extract(".index_bike");
-
-        $doms.text_0 = Helper.$extract(".index_text_0");
-        $doms.text_1 = Helper.$extract(".index_text_1");
-        $doms.text_2 = Helper.$extract(".index_text_2");
-
-        Helper.getInitValue($doms.background[0]);
         Helper.getInitValue($doms.bike[0]);
+
+        setupScene(1);
+        setupScene(2);
+
+        $doms.scene_2.toggleClass("svg-clipped", true);
+
+
+        function setupScene(index)
+        {
+            var $scene = $doms["scene_" + index] = $doms.container.find(".index_scene_" + index);
+
+
+
+            $scene.background = Helper.$extract(".background", $scene[0]);
+
+            $scene.text_1 = Helper.$extract(".index_text_1", $scene[0]);
+            //$scene.text_2 = Helper.$extract(".index_text_2", $scene[0]);
+
+            //Helper.getInitValue($doms.background[0]);
+
+        }
     };
 
     _p.beforeStageIn = function(options)
     {
-
+        /*
         if(options && options.isFirstIn)
         {
-
-            //TweenMax.killTweensOf($doms.bike);
             TweenMax.killTweensOf($doms.text_0[0]);
             TweenMax.killTweensOf($doms.text_1[0]);
             TweenMax.killTweensOf($doms.text_2[0]);
@@ -53,12 +64,13 @@
             TweenMax.set($doms.text_0[0], {autoAlpha:0});
             TweenMax.set($doms.text_1[0], {autoAlpha:1});
             TweenMax.set($doms.text_2,{autoAlpha:1, rotationY:0});
-            //$doms.bike[0].offset = $doms.bike.offset();
         }
+        */
     };
 
     _p.afterStageIn = function(options)
     {
+        /*
         if(options.isFirstIn)
         {
 
@@ -85,9 +97,9 @@
         {
             TweenMax.to($doms.bike,.6, {autoAlpha:1, onComplete:options.onComplete});
         }
+        */
 
-
-
+        TweenMax.to($doms.bike,.6, {autoAlpha:1, onComplete:options.onComplete});
     };
 
     _p.beforeStageOut = function()
@@ -123,14 +135,21 @@
 
     _p.onResize = function (width, height, bgBound)
     {
-        var bgDom = $doms.background[0];
         var bound = bgBound;
 
-        $(bgDom).css("width", bound.width).css("height", bound.height).css("left", (width - bound.width) *.5).css("top", (height - bound.height) *.5);
         Helper.applyTransform($doms.bike[0], bound.ratio, ["w", "h", "ml", "mt"]);
-        Helper.applyTransform($doms.text_0[0], bound.ratio, ["w", "h", "ml", "mt"]);
-        Helper.applyTransform($doms.text_1[0], bound.ratio, ["w", "h", "ml", "mt"]);
-        Helper.applyTransform($doms.text_2[0], bound.ratio, ["w", "h", "ml", "mt"]);
+
+        updateScene(1);
+        updateScene(2);
+
+        function updateScene(index)
+        {
+            var $scene = $doms["scene_" + index];
+            var bgDom = $scene.background[0];
+            $(bgDom).css("width", bound.width).css("height", bound.height).css("left", (width - bound.width) *.5).css("top", (height - bound.height) *.5);
+            Helper.applyTransform($scene.text_1[0], bound.ratio, ["w", "h", "ml", "mt"]);
+            //Helper.applyTransform($scene.text_2[0], bound.ratio, ["w", "h", "ml", "mt"]);
+        }
 
         //$doms.bike[0].offset = $doms.bike.position();
 

@@ -20,8 +20,8 @@
         setupButton(1, "/Index");
         setupButton(2, "/Brand");
         setupButton(3, "/Feature");
-        setupButton(4, "/Spec");
-        //setupButton(5, "/Watch");
+        setupButton(4, "/Detail");
+        setupButton(5, "/Watch");
 
         function setupButton(index, hashName)
         {
@@ -214,7 +214,8 @@
         setupMenuButton(1, "/Index");
         setupMenuButton(3, "/Brand");
         setupMenuButton(5, "/Feature");
-        setupMenuButton(7, "/Spec");
+        setupMenuButton(7, "/Detail");
+        setupMenuButton(9, "/Watch");
 
         $doms.basement.css("display", "none");
 

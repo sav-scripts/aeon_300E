@@ -5,6 +5,12 @@
         <!--<meta name="viewport" content="width=1920; initial-scale=1, maximum-scale=1">-->
         <meta name="viewport" content="width=720">
         <title>AEON 300E</title>
+        <style>
+            .svg-clipped {
+                -webkit-clip-path: url(#svgPath);
+                clip-path: url(#svgPath);
+            }
+        </style>
     </head>
 
     <link href="css/style.css" rel="stylesheet" type="text/css">
@@ -41,23 +47,63 @@
         <script src="js/Index.js"></script>
         <script src="js/Brand.js"></script>
         <script src="js/Feature.js"></script>
+        <script src="js/Detail.js"></script>
+        <script src="js/Watch.js"></script>
         <script src="js/Menu.js"></script>
         <script src="js/Main.js"></script>
 
 
+        <svg height="0" width="0">
+            <defs>
+                <clipPath id="svgPath">
+                    <circle stroke="#000000" stroke-miterlimit="10" cx="50" cy="50" r="40"></circle>
+                    <circle stroke="#000000" stroke-miterlimit="10" cx="193.949" cy="235" r="74.576"></circle>
+                    <circle stroke="#000000" stroke-miterlimit="10" cx="426.576" cy="108.305" r="47.034"></circle>
+                    <circle stroke="#000000" stroke-miterlimit="10" cx="346.915" cy="255.763" r="43.644"></circle>
+                    <circle stroke="#000000" stroke-miterlimit="10" cx="255.39" cy="82.882" r="35.17"></circle>
+                    <circle stroke="#000000" stroke-miterlimit="10" cx="328.695" cy="157.034" r="25.424"></circle>
+                    <circle stroke="#000000" stroke-miterlimit="10" cx="594.797" cy="360.424" r="121.187"></circle>
+                    <circle stroke="#000000" stroke-miterlimit="10" cx="470.008" cy="223.771" r="31.992"></circle>
+                    <circle stroke="#000000" stroke-miterlimit="10" cx="299.525" cy="400.762" r="64.407"></circle>
+                    <circle stroke="#000000" stroke-miterlimit="10" cx="634.627" cy="183.305" r="92.373"></circle>
+                    <circle stroke="#000000" stroke-miterlimit="10" cx="136.746" cy="172.712" r="106.356"></circle>
+                    <circle stroke="#000000" stroke-miterlimit="10" cx="91.831" cy="416.779" r="36.017"></circle>
+                    <circle stroke="#000000" stroke-miterlimit="10" cx="125.305" cy="335" r="25.424"></circle>
+                    <circle stroke="#000000" stroke-miterlimit="10" cx="192.424" cy="421.271" r="20.509"></circle>
+                    <circle stroke="#000000" stroke-miterlimit="10" cx="184.847" cy="362.543" r="18.22"></circle>
+                    <circle stroke="#000000" stroke-miterlimit="10" cx="436.568" cy="385.602" r="72.635"></circle>
+                    <circle stroke="#000000" stroke-miterlimit="10" cx="345.644" cy="90.085" r="23.729"></circle>
+                    <circle stroke="#000000" stroke-miterlimit="10" cx="534.627" cy="85" r="42.373"></circle>
+                    <circle stroke="#000000" stroke-miterlimit="10" cx="426.305" cy="12.017" r="83.898"></circle>
+                    <circle stroke="#000000" stroke-miterlimit="10" cx="277.458" cy="314.694" r="22.068"></circle>
+                    <circle stroke="#000000" stroke-miterlimit="10" cx="413.229" cy="195.381" r="22.669"></circle>
+                    <circle stroke="#000000" stroke-miterlimit="10" cx="277.848" cy="185" r="16.949"></circle>
+                    <circle stroke="#000000" stroke-miterlimit="10" cx="493.102" cy="158.729" r="19.492"></circle>
+                    <circle stroke="#000000" stroke-miterlimit="10" cx="424.517" cy="290.873" r="24.517"></circle>
+                    <circle stroke="#000000" stroke-miterlimit="10" cx="71.067" cy="348.56" r="49.152"></circle>
+                    <circle stroke="#000000" stroke-miterlimit="10" cx="737.221" cy="62.915" r="50.898"></circle>
+                    <circle stroke="#000000" stroke-miterlimit="10" cx="740" cy="430" r="50" ></circle>
+                    <circle stroke="#000000" stroke-miterlimit="10" cx="700" cy="700" r="500" ></circle>
+                </clipPath>
+            </defs>
+        </svg>
+
         <div id="logo"></div>
+
 
         <div id="index_block" class="scroll_block" hash="/Index">
 
-            <img class="background" src="images/index_bg_1920.jpg"/>
             <img class="index_bike" src="images/index_bike_1920.png"/>
-            <img class="index_text_0" src="images/index_tit01_1920.png"/>
-            <img class="index_text_1" src="images/index_tit01_1920.png"/>
-            <img class="index_text_2" src="images/index_tit02_1920.png"/>
 
+            <div class="index_scene_1">
+                <img class="background" src="images/index_bg_01.jpg"/>
+                <div class="index_text_1"></div>
+            </div>
 
-
-
+            <div class="index_scene_2">
+                <img class="background" src="images/index_bg_02.jpg"/>
+                <div class="index_text_1"></div>
+            </div>
 
 
 
@@ -146,124 +192,60 @@
                 <div class="description"></div>
             </div>
 
-            <!--<div class="svg_layer">-->
-                <!--<svg width="500" height="210">-->
+
+            <div class="parallelogram"></div>
+
+            <!--
+            <div class="svg_layer">
+                <svg width="500" height="210">
 
 
-                    <!--<polygon class="left_polygon" points="200,10 250,190 160,210"></polygon>-->
-                    <!--<polygon class="right_polygon" points="200,10 250,190 160,210"></polygon>-->
+                    <polygon class="left_polygon" points="200,10 250,190 160,210"></polygon>
+                    <polygon class="right_polygon" points="200,10 250,190 160,210"></polygon>
 
-                <!--</svg>-->
-            <!--</div>-->
-
-
-            <svg class="parallelogram" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" x="0px" y="0px" width="1920px" height="1040px" viewBox="0 0 1920 1040">
-                <defs>
-                    <g id="Layer7_0_FILL">
-                        <path fill="#C3C2BF" fill-opacity="0.9490196078431372" stroke="none" d="
-M 0 1040
-L 576.55 1040 1110.2 0 533.65 0 0 1040 Z"/>
-                    </g>
-
-                    <g id="Mask_6_MASK_0_FILL">
-                        <path fill="#FFFFFF" stroke="none" d="
-M 0 1040
-L 576.55 1040 1110.2 0 533.65 0 0 1040 Z"/>
-                    </g>
-
-                    <g id="Layer6_0_MEMBER_0_FILL">
-                        <path fill="#FFFFFF" fill-opacity="0.06666666666666667" stroke="none" d="
-M 997.95 -403.25
-L 713.05 -98.4 999.3 697.6 1284.15 392.75 997.95 -403.25 Z"/>
-                    </g>
-
-                    <g id="Layer5_0_MEMBER_0_FILL">
-                        <path fill="#FFFFFF" fill-opacity="0.06666666666666667" stroke="none" d="
-M 1412.05 341.1
-L 1450.85 -74.25 737.65 -528.8 698.8 -113.45 1412.05 341.1 Z"/>
-                    </g>
-
-                    <g id="Layer4_0_MEMBER_0_FILL">
-                        <path fill="#FFFFFF" fill-opacity="0.06666666666666667" stroke="none" d="
-M 1284.15 -105.85
-L 928.95 -324.4 205.8 113.8 560.95 332.45 1284.15 -105.85 Z"/>
-                    </g>
-
-                    <g id="Layer3_0_MEMBER_0_FILL">
-                        <path fill="#FFFFFF" fill-opacity="0.06666666666666667" stroke="none" d="
-M 504.9 -48.85
-L 466.05 366.5 1179.3 821.05 1218.1 405.7 504.9 -48.85 Z"/>
-                    </g>
-
-                    <g id="Layer2_0_MEMBER_0_FILL">
-                        <path fill="#FFFFFF" fill-opacity="0.06666666666666667" stroke="none" d="
-M 285.25 1014
-L 629.35 1249.65 1372.85 847.1 1028.75 611.5 285.25 1014 Z"/>
-                    </g>
-
-                    <g id="Layer1_0_MEMBER_0_FILL">
-                        <path fill="#FFFFFF" fill-opacity="0.06666666666666667" stroke="none" d="
-M 460.6 268.3
-L 205.8 598.35 565.3 1363.4 820.1 1033.35 460.6 268.3 Z"/>
-                    </g>
-                </defs>
-
-                <g transform="matrix( 1, 0, 0, 1, 0,0) ">
-                    <use xlink:href="#Layer7_0_FILL"/>
-                </g>
-
-                <mask id="Mask_Mask_1">
-                    <g transform="matrix( 1, 0, 0, 1, 0,0) ">
-                        <use xlink:href="#Mask_6_MASK_0_FILL"/>
-                    </g>
-                </mask>
-
-                <g mask="url(#Mask_Mask_1)">
-                    <g transform="matrix( 1, 0, 0, 1, -205.8,0) ">
-                        <use xlink:href="#Layer6_0_MEMBER_0_FILL"/>
-                    </g>
-                </g>
-
-                <g mask="url(#Mask_Mask_1)">
-                    <g transform="matrix( 1, 0, 0, 1, -205.8,0) ">
-                        <use xlink:href="#Layer5_0_MEMBER_0_FILL"/>
-                    </g>
-                </g>
-
-                <g mask="url(#Mask_Mask_1)">
-                    <g transform="matrix( 1, 0, 0, 1, -205.8,0) ">
-                        <use xlink:href="#Layer4_0_MEMBER_0_FILL"/>
-                    </g>
-                </g>
-
-                <g mask="url(#Mask_Mask_1)">
-                    <g transform="matrix( 1, 0, 0, 1, -205.8,0) ">
-                        <use xlink:href="#Layer3_0_MEMBER_0_FILL"/>
-                    </g>
-                </g>
-
-                <g mask="url(#Mask_Mask_1)">
-                    <g transform="matrix( 1, 0, 0, 1, -205.8,0) ">
-                        <use xlink:href="#Layer2_0_MEMBER_0_FILL"/>
-                    </g>
-                </g>
-
-                <g mask="url(#Mask_Mask_1)">
-                    <g transform="matrix( 1, 0, 0, 1, -205.8,0) ">
-                        <use xlink:href="#Layer1_0_MEMBER_0_FILL"/>
-                    </g>
-                </g>
-            </svg>
+                </svg>
+            </div>
+            -->
 
 
+            <div class="feature_icon_group">
+
+                <div class="feature_icon"></div>
+                <div class="feature_icon"></div>
+                <div class="feature_icon"></div>
+                <div class="feature_icon"></div>
+
+            </div>
 
         </div>
 
-        <div id="spec_block" class="scroll_block" hash="/Spec">
+        <div id="detail_block" class="scroll_block" hash="/Detail">
+
+            <div class="left_bike_1"></div>
+            <div class="left_bike_2"></div>
+            <div class="bike_label"></div>
+
+            <div class="detail_background"></div>
+            <div class="detail_form"></div>
+
         </div>
 
-        <!--<div id="watch_block" class="scroll_block" hash="/Watch">-->
-        <!--</div>-->
+        <div id="watch_block" class="scroll_block" hash="/Watch">
+            <div class="center_group">
+                <div class="text_row_1"></div>
+                <div class="text_row_2"></div>
+                <div class="text_row_3"></div>
+                <div class="text_row_4"></div>
+            </div>
+            <div class="watch_bike_group">
+                <div class="watch_bike_1"></div>
+                <div class="watch_bike_2"></div>
+                <div class="watch_bike_3"></div>
+                <div class="watch_bike_4"></div>
+                <div class="watch_bike_5"></div>
+                <div class="watch_bike_6"></div>
+            </div>
+        </div>
 
         <div id="big_menu_block">
 
@@ -276,6 +258,8 @@ L 205.8 598.35 565.3 1363.4 820.1 1033.35 460.6 268.3 Z"/>
 
             <div class="basement">
                 <div class="button_group">
+                    <div class="menu_button"></div>
+                    <div class="menu_button"></div>
                     <div class="menu_button"></div>
                     <div class="menu_button"></div>
                     <div class="menu_button"></div>
@@ -315,11 +299,11 @@ L 205.8 598.35 565.3 1363.4 820.1 1033.35 460.6 268.3 Z"/>
                     <div class="core_2"></div>
                     <div class="core_3"></div>
                 </div>
-                <!--<div class="button">-->
-                    <!--<div class="core_1"></div>-->
-                    <!--<div class="core_2"></div>-->
-                    <!--<div class="core_3"></div>-->
-                <!--</div>-->
+                <div class="button">
+                    <div class="core_1"></div>
+                    <div class="core_2"></div>
+                    <div class="core_3"></div>
+                </div>
             </div>
 
         </div>

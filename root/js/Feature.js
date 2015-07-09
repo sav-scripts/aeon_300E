@@ -20,6 +20,9 @@
     _p.init = function ()
     {
         $doms.container = $("#feature_block");
+        $doms.iconGroup = $(".feature_icon_group");
+
+        Helper.getInitValue($doms.iconGroup[0]);
 
         setupContent(1, true);
         setupContent(2);
@@ -55,25 +58,42 @@
             $dom.find(".feature_bike").parent().append(image);
             $dom.find(".feature_bike").detach();
 
+
+
             image.className = "feature_bike";
+
+            $dom.$btnIcon =  $doms.iconGroup.find(".feature_icon:nth-of-type("+index+")");
+
+            $dom.$btnIcon.bind("mousedown", function()
+            {
+                if(Main.getPlaying()) return;
+                if(_currentIndex == index) return;
+
+                _p.toContent(index);
+            });
 
 
             var $bike = $dom.$bike = $dom.find(".feature_bike");
             Helper.pxToPercent($bike[0], v.w, v.h);
 
-            var $desc = $dom.find(".description");
+            var $desc = $dom.$desc = $dom.find(".description");
             Helper.pxToPercent($desc[0], v.w, v.h);
 
-            var $bigDot = $dom.find(".dot_big");
+            var $bigDot = $dom.$bigDot = $dom.find(".dot_big");
             Helper.pxToPercent($bigDot[0], v.w, v.h);
 
-            var $smallDot = $dom.find(".dot_small");
+            var $bigDotCore = $bigDot.find(".dot_core");
+            var $bigDotGlow = $bigDot.find(".dot_glow");
+
+            var $smallDot = $doms.$smallDot = $dom.find(".dot_small");
             Helper.pxToPercent($smallDot[0], v.w, v.h, {"left":true, "top":false});
+
+            $dom.childList = [$bike[0], $desc[0], $bigDot[0], $smallDot[0]];
 
             var $line = $dom.find(".dot_line");
             Helper.pxToPercent($line[0], v.w, v.h);
 
-            $dom.vv = new Vivus('dot_line_' + index, {type: 'delayed', duration: 50, start:"manual", animTimingFunction: Vivus.EASE_IN});
+            $dom.vv = new Vivus('dot_line_' + index, {type: 'delayed', duration: 50, start:"manual", animTimingFunction: Vivus.EASE_IN}, onVVComplete);
 
             $dom.css("visibility", "visible");
 
@@ -85,6 +105,85 @@
             {
                 $dom.css("display", "none");
             }
+
+            var twinkle = $dom.twinkle = new TimelineMax({repeat:-1, paused:true});
+
+            twinkle.set($bigDotGlow, {scale:0, alpha:1});
+            twinkle.to($bigDotGlow,.5, {scale:1});
+            twinkle.to($bigDotGlow,.3, {alpha:0},.2);
+            //twinkle.to($bigDotGlow,.4, {alpha:0});
+
+            $dom.hideChilds = function(instantly, cb)
+            {
+                twinkle.pause();
+
+                if(instantly)
+                {
+                    TweenMax.set($dom.childList, {autoAlpha:0});
+                    if(cb) cb.apply();
+                }
+                else
+                {
+                    var tl = new TimelineMax;
+                    tl.to($desc,.5, {autoAlpha:0},.0);
+                    tl.to($bigDot,.5, {autoAlpha:0},.1);
+                    tl.to($line,.5, {autoAlpha:0},.1);
+                    tl.to($smallDot,.5, {autoAlpha:0},.1);
+                    tl.to($bike,.5, {autoAlpha:0},.2);
+                    tl.add(function()
+                    {
+                        if(cb) cb.apply();
+                    });
+                }
+            };
+
+            var cbAfterPlayed;
+
+            $dom.playChilds = function(cb)
+            {
+                cbAfterPlayed = cb;
+
+                twinkle.restart();
+
+                $dom.vv.reset();
+                TweenMax.set($line, {autoAlpha:1});
+
+                var tl = new TimelineMax;
+
+                tl.set($bigDotCore,{scale:0});
+                tl.set($bigDotGlow,{scale:0});
+
+                tl.to($bike,.5, {autoAlpha:1});
+                tl.to($smallDot,.5, {autoAlpha:1},.0);
+                tl.add(function ()
+                {
+                    $dom.vv.play();
+                },.0);
+
+            };
+
+            function onVVComplete()
+            {
+                var tl = new TimelineMax;
+                tl.to($bigDot,.5, {autoAlpha:1});
+                tl.to($desc,.5, {autoAlpha:1},.2);
+
+                tl.to($bigDotCore,.5,{scale:1, ease:Back.easeOut}, 0);
+                //tl.to($bigDotGlow,.5,{scale:1, ease:Back.easeOut},.2);
+                tl.add(function()
+                {
+                    twinkle.restart();
+                },.2)
+
+                tl.add(function()
+                {
+                   if(cbAfterPlayed)
+                   {
+                       cbAfterPlayed.apply();
+                       cbAfterPlayed = null;
+                   }
+                });
+            }
         }
 
         SvgMaskLayer.init(_offsetDic[1]);
@@ -92,58 +191,87 @@
         //SvgMaskLayer.updatePosition(_offsetDic[1], true);
     };
 
+    _p.changeIndex = function(index)
+    {
+        $(".feature_icon").toggleClass("selected", false);
+        _currentIndex = index;
+
+        var $dom = $doms["feature_" + _currentIndex];
+        $dom.$btnIcon.toggleClass("selected", true);
+
+    };
+
     _p.toContent = function(index, updateNow, cb)
     {
 
-        if(index == _currentIndex) return;
-
-        //Main.setPlaying(true);
-        //
-        //var $current = $doms["feature_" + _currentIndex];
-        //var $target = $doms["feature_" + index];
-        //
-        //
-        //var startTop = index > _currentIndex? Main.stageHeight: -Main.stageHeight;
-        //var targetTop = index > _currentIndex? -Main.stageHeight: Main.stageHeight;
-        //
-        //$target.css("display", "block").css("top", startTop);
-        //
-        //
-        //TweenMax.to($target,1, {top:0});
-        //TweenMax.to($current,1, {top:targetTop, onComplete:function()
-        //{
-        //    $current.css("display", "none");
-        //    Main.setPlaying(false);
-        //}});
+        //if(index == _currentIndex) return;
 
 
+        var $old, $new;
 
-        if(_currentIndex != -1)
+        if(updateNow)
         {
-            var $old = $doms["feature_" + _currentIndex];
-            $old.css("display", "none");
-            $old.vv.stop();
+            if(_currentIndex != -1 && _currentIndex != index)
+            {
+                $old = $doms["feature_" + _currentIndex];
+                $old.css("display", "none");
+                $old.vv.stop();
+            }
+
+            $new = $doms["feature_" + index];
+            $new.css("display", "block");
+            $new.vv.reset();
+
+            $new.hideChilds(true);
+
+
+            //Main.setPlaying(true);
+
+
+            _p.changeIndex(index);
+
+            SvgMaskLayer.toPercent(_offsetDic[index], null, true);
+
+            //Main.setPlaying(false);
+        }
+        else
+        {
+            Main.setPlaying(true);
+
+            $old = $doms["feature_" + _currentIndex];
+            $new = $doms["feature_" + index];
+
+            _p.changeIndex(index);
+
+            //TweenMax.set($new.childList, {autoAlpha:0});
+
+            $new.hideChilds(true);
+            $new.css("display", "block");
+
+            $old.hideChilds(false, function()
+            {
+               $old.css("display", "none");
+            });
+
+            $new.playChilds(function()
+            {
+                Main.setPlaying(false);
+                if(cb) cb.apply();
+            });
+
+
+            SvgMaskLayer.toPercent(_offsetDic[index],function()
+            {
+
+                /*
+                Main.setPlaying(false);
+                if(cb) cb.apply();
+                */
+
+            }, false);
         }
 
-        var $new = $doms["feature_" + index];
 
-        $new.css("display", "block");
-
-        $new.vv.reset();
-
-
-        Main.setPlaying(true);
-
-
-        _currentIndex = index;
-
-        SvgMaskLayer.toPercent(_offsetDic[index],function()
-        {
-            $new.vv.play();
-            Main.setPlaying(false);
-            if(cb) cb.apply();
-
-        }, updateNow);
 
     };
 
@@ -175,14 +303,26 @@
     {
         SvgMaskLayer.play();
 
-        if(options && options.onComplete)
+        $doms["feature_" + _currentIndex].playChilds(function()
         {
-            TweenMax.delayedCall(.6, options.onComplete);
-        }
+           if(options && options.onComplete)
+            {
+                options.onComplete.apply();
+                //TweenMax.delayedCall(.6, options.onComplete);
+            }
+        });
+
+
     };
 
     _p.beforeStageOut = function()
     {
+        var $dom = $doms["feature_" + _currentIndex];
+        $dom.hideChilds(false, function()
+        {
+            $dom.css("display", "none");
+        });
+
         SvgMaskLayer.pause();
     };
 
@@ -235,6 +375,10 @@
         Helper.applyTransform($doms.feature_2[0], bgBound.ratio, ["w", "h"]);
         Helper.applyTransform($doms.feature_3[0], bgBound.ratio, ["w", "h"]);
         Helper.applyTransform($doms.feature_4[0], bgBound.ratio, ["w", "h"]);
+
+
+        Helper.applyTransform($doms.iconGroup[0], bgBound.ratio, ["r", "b"]);
+        //TweenMax.set($doms.iconGroup, {scale:bgBound.ratio, transformOrigin:"right bottom"});
     };
 
 }());
@@ -266,12 +410,10 @@
 
         _currentCenter = centerPercent;
 
+
+
+        /*
         $doms.shapes = $doms.container.children("g");
-
-        //console.log($doms.shapes.length);
-
-
-
 
         var i, duration = .6, gap = .2;
 
@@ -299,6 +441,7 @@
             _currentIndex ++;
             if(_currentIndex > _endIndex) _currentIndex = _startIndex;
         },gap);
+        */
 
     };
 
@@ -338,7 +481,7 @@
 
     _p.pause = function()
     {
-        _tl.pause();
+        //_tl.pause();
     };
 
     _p.update = function()
@@ -359,8 +502,13 @@
         _height = height;
 
         var ratio = _height / Main.rawHeight;
+
+        /*
         $doms.container.attr("height", _height);
         $doms.container.attr("width", Main.rawWidth * ratio);
+        */
+
+        $doms.container.css("width", 1110 * ratio).css("height", _height);
 
         _textureWidth = _rawTextureWidth * ratio;
         _textureCenter = _rawTextureCenter * ratio;

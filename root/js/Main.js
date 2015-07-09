@@ -24,7 +24,8 @@
     {
         "/Index": {url:"data/index.txt"},
         "/Brand": {url:"data/brand.txt"},
-        "/Feature": {url:"data/feature_1.txt"}
+        "/Feature": {url:"data/feature_1.txt"},
+        "/Detail": {url:"data/detail.txt"}
     };
 
     var _wgSetting =
@@ -45,6 +46,11 @@
     _p.setPlaying = function(b)
     {
         _isPlaying = b;
+    };
+
+    _p.getPlaying = function()
+    {
+        return _isPlaying;
     };
 
     _p.init = function ()
@@ -97,6 +103,8 @@
 
                 _p.changeTo("/Index");
 
+                _wgDic["/Watch"] = {};
+
                 if(cb) cb.apply();
             });
 
@@ -119,6 +127,8 @@
         Index.init();
         Brand.init();
         Feature.init();
+        Detail.init();
+        Watch.init();
         SmallMenu.init();
         Menu.init();
 
@@ -439,15 +449,14 @@
 
     _p.onResize = function ()
     {
-        if(!_isAlerted)
-        {
-            if(window.orientation == 0 || window.orientation == 180)
-            {
-                alert("請以橫向方式瀏覽以得到較佳的瀏覽體驗.");
-                _isAlerted = true;
-            }
-
-        }
+        //if(!_isAlerted)
+        //{
+        //    if(window.orientation == 0 || window.orientation == 180)
+        //    {
+        //        alert("請以橫向方式瀏覽以得到較佳的瀏覽體驗.");
+        //        _isAlerted = true;
+        //    }
+        //}
 
         var width = _stageWidth = Main.stageWidth = $(window).width();
         var height = _stageHeight = Main.stageHeight = $(window).height();
@@ -457,6 +466,8 @@
         Index.onResize(width, height, bgBound);
         Brand.onResize(width, height, bgBound);
         Feature.onResize(width, height, bgBound);
+        Detail.onResize(width, height, bgBound);
+        Watch.onResize(width, height, bgBound);
         SmallMenu.onResize(width, height, bgBound);
         Menu.onResize(width, height, bgBound);
 

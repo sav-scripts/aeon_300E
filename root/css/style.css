@@ -18,7 +18,7 @@ img {
 }
 
 body{
-    /*height:200%;*/
+    height:200%;
     font-family: '微軟正黑體', "Heiti TC", serif;
     font-size: 14px;
 }
@@ -255,6 +255,15 @@ body{
     background-position: 0 -216px;
 }
 
+#big_menu_block .menu_button:nth-of-type(8){
+    background-position: 0 -180px;
+    cursor: default;
+}
+
+#big_menu_block .menu_button:nth-of-type(9){
+    background-position: 0 -216px;
+}
+
 .menu_red_line{
     position: absolute;
     width:128px;
@@ -296,8 +305,27 @@ body{
 /** index **/
 #index_block{
 }
+
+.index_scene_1{
+    position: absolute;
+    top:0;
+    left:0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+.index_scene_2{
+    position: absolute;
+    top:0;
+    left:0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+}
+
 #index_block .background{
     position: absolute;
+    /*clip-path: url(#svgPath);*/
 }
 
 .index_bike{
@@ -306,13 +334,7 @@ body{
     left: 50%;
     margin-left: -757px;
     margin-top: -454px;
-}
-.index_text_0{
-    position: absolute;
-    top:50%;
-    left:50%;
-    margin-top: -260px;
-    margin-left: 20px;
+    z-index: 3;
 }
 .index_text_1{
     position: absolute;
@@ -320,15 +342,20 @@ body{
     left:50%;
     margin-top: -380px;
     margin-left: 20px;
-    visibility: hidden;
 }
-.index_text_2{
-    position: absolute;
-    top:50%;
-    left:50%;
-    margin-left: 20px;
-    margin-top: 50px;
-    visibility: hidden;
+
+.index_scene_1 .index_text_1{
+    background: url("../images/index_text_1.png");
+    background-size: cover;
+    width: 828px;
+    height: 693px;
+}
+
+.index_scene_2 .index_text_1{
+    background: url("../images/index_text_2.png");
+    background-size: cover;
+    width: 828px;
+    height: 693px;
 }
 
 /** brand **/
@@ -440,7 +467,7 @@ body{
 
 /** feature **/
 #feature_block{
-    background: url(../images/index_bg_1920.jpg);
+    background: url(../images/index_bg_01.jpg);
     background-size:cover;
 }
 
@@ -457,6 +484,10 @@ body{
 .parallelogram{
     position: absolute;
     z-index: 1;
+    width: 1110px;
+    height: 1040px;
+    background: url("../images/product_bick_bg.png");
+    background-size: cover;
 }
 
 .feature_1, .feature_2, .feature_3, .feature_4{
@@ -685,14 +716,243 @@ body{
     left:-1018px;
     top:91px;
 }
+
+.feature_icon_group{
+    position: absolute;
+    z-index: 100;
+    right:100px;
+    bottom:100px;
+    width:320px;
+}
+.feature_icon{
+    position: relative;
+    float:left;
+    background: url("../images/product_list_v2.png");
+    width:75px;
+    height:75px;
+    margin-right:5px;
+}
+.feature_icon:nth-of-type(1){
+    background-position: 0 0;
+}
+.feature_icon:nth-of-type(2){
+    background-position: -80px 0;
+}
+.feature_icon:nth-of-type(3){
+    background-position: -160px 0;
+}
+.feature_icon:nth-of-type(4){
+    background-position: -240px 0;
+}
+
+.feature_icon:nth-of-type(1):hover, .feature_icon:nth-of-type(1).selected{
+    background-position: 0 -80px;
+    cursor: pointer;
+}
+
+.feature_icon:nth-of-type(2):hover, .feature_icon:nth-of-type(2).selected{
+    background-position: -80px -80px;
+    cursor: pointer;
+}
+
+.feature_icon:nth-of-type(3):hover, .feature_icon:nth-of-type(3).selected{
+    background-position: -160px -80px;
+    cursor: pointer;
+}
+
+.feature_icon:nth-of-type(4):hover, .feature_icon:nth-of-type(4).selected{
+    background-position: -240px -80px;
+    cursor: pointer;
+}
+
 /** spec **/
-#spec_block{
-    background:url(../images/detail_1920.jpg) center center;
+#detail_block{
+    /*background:url(../images/detail_1920.jpg) center center;*/
+    /*background-size: cover;*/
+    background: #1d1c1a;
+}
+
+#detail_block .left_bike_1{
+    position: absolute;
+    top:50%;
+    left:50%;
+    /*background: url("../images/detail_bike01.png");*/
+    /*background-size: cover;*/
+    z-index: 2;
+    width: 962px;
+    height: 659px;
+
+    margin-left: -960px;
+    margin-top: -220px;
+}
+
+#detail_block .left_bike_2{
+    position: absolute;
+    top:50%;
+    left:50%;
+    background: url("../images/detail_bike02.png");
     background-size: cover;
+    z-index: 1;
+    width: 698px;
+    height: 627px;
+
+    margin-left: -650px;
+    margin-top: -308px;
+}
+
+#detail_block .bike_label{
+    position: absolute;
+    background: url("../images/detail_bike_name.png");
+    background-size: cover;
+    width: 172px;
+    height: 61px;
+    left:90px;
+    bottom:70px;
+    z-index: 3;
+}
+
+#detail_block .detail_background{
+    position: absolute;
+    background: url("../images/detail_txt_bg.png");
+    background-size: cover;
+    width: 939px;
+    height: 1180px;
+    top:50%;
+    left:50%;
+    margin-left: -60px;
+    margin-top: -590px;
+}
+
+#detail_block .detail_form{
+    position: absolute;
+    background: url("../images/detail_txt.png");
+    background-size: cover;
+    width: 648px;
+    height: 679px;
+    top:50%;
+    left:50%;
+    margin-left: 80px;
+    margin-top: -288px;
+
 }
 
 
 /** watch **/
 #watch_block{
-    background: #445533;
+    background: #1d1c1a;
+}
+
+#watch_block .center_group{
+    position: absolute;
+    top:50%;
+    left:50%;
+    width: 728px;
+    height: 780px;
+    margin-left: -350px;
+    margin-top: -390px;
+
+    z-index: 1;
+
+    /*background: rgba(255,0,0,.5);*/
+}
+
+#watch_block .text_row_1{
+    background: url(../images/brand_txt_bgt01.png);
+    background-size: cover;
+    /*width: 728px;*/
+    /*height: 180px;*/
+    width: 100%;
+    height: 23.08%;
+
+    top:0;
+}
+
+#watch_block .text_row_2{
+    background: url(../images/brand_txt_bgt02.png);
+    background-size: cover;
+    width: 100%;
+    height: 23.08%;
+
+    top:25.64%;
+}
+
+#watch_block .text_row_3{
+    background: url(../images/brand_txt_bgt03.png);
+    background-size: cover;
+    width: 100%;
+    height: 23.08%;
+
+    top:51.28%;
+}
+
+#watch_block .text_row_4{
+    background: url(../images/brand_txt_bgt04.png);
+    background-size: cover;
+    width: 100%;
+    height: 23.08%;
+
+    top:76.72%;
+}
+
+.watch_bike_group{
+    position: absolute;
+    top:50%;
+    left:50%;
+    width: 100px;
+    height: 100px;
+    z-index: 2;
+}
+.watch_bike_1{
+    position: absolute;
+    background: url("../images/product_bike_01.png");
+    background-size: cover;
+    width: 439px;
+    height: 862px;
+    left:-219px;
+    top:-361px;
+}
+.watch_bike_2{
+    position: absolute;
+    background: url("../images/360_02.png");
+    background-size: cover;
+    width: 1003px;
+    height: 926px;
+    left:-501px;
+    top:-413px;
+}
+.watch_bike_3{
+    position: absolute;
+    background: url("../images/360_03.png");
+    background-size: cover;
+    width: 1383px;
+    height: 816px;
+    left:-691px;
+    top:-408px;
+}
+.watch_bike_4{
+    position: absolute;
+    background: url("../images/360_04.png");
+    background-size: cover;
+    width: 459px;
+    height: 912px;
+    left:-229px;
+    top:-406px;
+}
+.watch_bike_5{
+    position: absolute;
+    background: url("../images/360_05.png");
+    background-size: cover;
+    width: 1459px;
+    height: 826px;
+    left:-729px;
+    top:-413px;
+}
+.watch_bike_6{
+    position: absolute;
+    background: url("../images/360_06.png");
+    background-size: cover;
+    width: 1356px;
+    height: 929px;
+    left:-678px;
+    top:-439px;
 }
