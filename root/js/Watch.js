@@ -9,6 +9,12 @@
 
     var $doms = {};
 
+    var _fetcheredDic =
+    {
+        small:false,
+        large:false
+    };
+
     _p.init = function ()
     {
         $doms.container = $("#watch_block");
@@ -25,20 +31,7 @@
         $doms.text_3 = $doms.container.find(".text_row_3");
         $doms.text_4 = $doms.container.find(".text_row_4");
 
-
-        var image;
-
-        image = new Image();
-        image.src = WireGraphic.getData("/Feature").image.src;
-
-        $doms.container.find(".watch_bike_1").parent().append(image);
-        $doms.container.find(".watch_bike_1").detach();
-
-        image.className = "watch_bike_1";
-
-
-        //$doms.bike1 = $doms.bikeGroup.find(".watch_bike_1");
-        //Helper.pxToPercent($doms.bike1[0], 100,100);
+        $doms.textDoms = [$doms.text_1[0], $doms.text_2[0], $doms.text_3[0], $doms.text_4[0]];
 
         $doms.contents = [];
 
@@ -49,15 +42,8 @@
         addContent(5);
         addContent(6);
 
-        function addContent(domIndex)
-        {
-            var $dom = $doms["bike_" + domIndex] = $doms.bikeGroup.find(".watch_bike_" + domIndex);
-            Helper.pxToPercent($dom, 100,100);
+        fetchGeom(Main.styleMode);
 
-            $doms.contents[domIndex-1] = $dom[0];
-
-            if(_currentIndex != (domIndex-1)) $dom.css("display", "none");
-        }
 
         if(BrowserDetect.isMobile && ('DeviceOrientationEvent' in window))
         {
@@ -68,7 +54,43 @@
             bindMouseTrigger();
         }
 
+
+        function addContent(domIndex)
+        {
+            var $dom = $doms["bike_" + domIndex] = $doms.bikeGroup.find(".watch_bike_" + domIndex);
+
+            //Helper.getInitValue($dom[0], true, [], {width: 100, height: 100}, true, mode);
+            //Helper.pxToPercent($dom, 100,100);
+
+            $doms.contents[domIndex-1] = $dom[0];
+
+            if(_currentIndex != (domIndex-1)) $dom.css("display", "none");
+        }
+
     };
+
+    function fetchGeom(mode)
+    {
+        if(_fetcheredDic[mode]) return;
+        _fetcheredDic[mode] = true;
+
+        var obj = {width:100, height:100};
+
+        fetchBike(1);
+        fetchBike(2);
+        fetchBike(3);
+        fetchBike(4);
+        fetchBike(5);
+        fetchBike(6);
+
+        function fetchBike(index)
+        {
+            var $bike = $doms["bike_" + index];
+            var oldDisplay = $bike.css("display");
+            Helper.getInitValue($bike[0], true, [], obj, true, mode);
+            $bike.css("display", oldDisplay);
+        }
+    }
 
     function handleOrientation(event)
     {
@@ -155,22 +177,22 @@
         TweenMax.set($doms.text_3, {x:-dx, autoAlpha:0});
         TweenMax.set($doms.text_4, {x:dx, autoAlpha:0});
 
-        TweenMax.set($doms.bike_1, {autoAlpha:0});
+        if(__WG) TweenMax.set($doms.bike_1, {autoAlpha:0});
 
     };
 
     _p.afterStageIn = function(options)
     {
         var tl = new TimelineMax;
-        var d1 = .6;
-        var e1 = Power1.easeOut;
+        var d1 = .9;
+        var e1 = Power3.easeOut;
 
-        tl.to($doms.text_1,d1, {ease:e1, x:0, autoAlpha:1});
-        tl.to($doms.text_2,d1, {ease:e1, x:0, autoAlpha:1},.1);
-        tl.to($doms.text_3,d1, {ease:e1, x:0, autoAlpha:1},.2);
-        tl.to($doms.text_4,d1, {ease:e1, x:0, autoAlpha:1},.3);
+        tl.staggerTo($doms.textDoms, d1, {ease:e1, x:1, autoAlpha:1}, .2);
 
-        TweenMax.to($doms.bike_1,.6, {autoAlpha:1, onComplete:function()
+        if(__WG) TweenMax.to($doms.bike_1,.6, {autoAlpha:1, onComplete:completed});
+        else completed();
+
+        function completed()
         {
             _isActive = true;
 
@@ -178,16 +200,20 @@
             {
                 options.onComplete.apply();
             }
-        }});
+
+        }
 
     };
 
     _p.beforeStageOut = function()
     {
         _isActive = false;
-        updateFrame(.5);
 
-        TweenMax.to($doms.bike_1,.5, {autoAlpha:0});
+        if(__WG)
+        {
+            updateFrame(.5);
+            TweenMax.to($doms.bike_1,.5, {autoAlpha:0});
+        }
     };
 
     _p.getWgData = function()
@@ -213,10 +239,22 @@
         return obj;
     };
 
-    _p.onResize = function (width, height, bgBound)
+    _p.onResize = function (width, height, bgBound, modeChanged, styleMode)
     {
+        if(modeChanged)
+        {
+            fetchGeom(styleMode);
 
-        Helper.applyTransform($doms.centerGroup[0], bgBound.ratio, ["w", "h", "ml", "mt"]);
+            Helper.applyTransform($doms.bike_1[0], bgBound.ratio, null, null, ["t", "l", "w", "h"], styleMode);
+            Helper.applyTransform($doms.bike_2[0], bgBound.ratio, null, null, ["t", "l", "w", "h"], styleMode);
+            Helper.applyTransform($doms.bike_3[0], bgBound.ratio, null, null, ["t", "l", "w", "h"], styleMode);
+            Helper.applyTransform($doms.bike_4[0], bgBound.ratio, null, null, ["t", "l", "w", "h"], styleMode);
+            Helper.applyTransform($doms.bike_5[0], bgBound.ratio, null, null, ["t", "l", "w", "h"], styleMode);
+            Helper.applyTransform($doms.bike_6[0], bgBound.ratio, null, null, ["t", "l", "w", "h"], styleMode);
+        }
+
+        var centerRatio = (styleMode == "small")? bgBound.ratio*.85: bgBound.ratio;
+        Helper.applyTransform($doms.centerGroup[0], centerRatio, ["w", "h", "ml", "mt"]);
         Helper.applyTransform($doms.bikeGroup[0], bgBound.ratio, ["w", "h"]);
     };
 

@@ -215,6 +215,8 @@
     {
         var data =
         {
+            width:_image.width,
+            height:_image.height,
             graphic_data: CanvasHandler.getExportData(),
             image_src: _image.src
         };

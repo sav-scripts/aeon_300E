@@ -18,6 +18,13 @@
     _p.rawWidth = 1920;
     _p.rawHeight = 1040;
 
+    _p.styleMode = null;
+
+    _p.settings =
+    {
+        isVerticalMode: false
+    };
+
     var _currentId;
 
     var _wgDic =
@@ -55,7 +62,38 @@
 
     _p.init = function ()
     {
-        buildWireGraphic(buildContent);
+        //console.log(BrowserDetect.browser == "Explorer");
+
+        window.__WG_Active = Modernizr.webgl;
+        if($(window).width() <= 720) window.__WG_Active = false;
+        //window.__WG = false;
+
+        var noCache = false;
+        var s = noCache? "?v=" + new Date().getTime(): "";
+
+        var wgLibs = ["js/lib/three.min.js", "js/MyThreeHelper.js", "js/WireGraphic.js"+s];
+
+
+        Modernizr.load
+        ({
+            test:window.__WG_Active,
+            yep:wgLibs,
+            complete:function()
+            {
+                if(__WG_Active)
+                {
+                    buildWireGraphic(buildContent);
+                }
+                else
+                {
+                    _wgDic["/Watch"] = {};
+                    buildContent();
+                }
+            }
+
+        });
+
+        //buildWireGraphic(buildContent);
     };
 
     function buildWireGraphic(cb)
@@ -68,39 +106,11 @@
         }
 
 
-        ShaderLoader.preventCache = true;
+        ShaderLoader.preventCache = false;
         ShaderLoader.load(["misc"], function()
         {
-            WGHelper.load(true, dataList, function()
+            WGHelper.load(true, false, dataList, function()
             {
-                for(var i=0;i<dataList.length;i++)
-                {
-                    var id = dataList[i].id;
-                    var img = WireGraphic.getData(id).image;
-
-
-                    //$(img).css("display", "block").css("position", "absolute");
-                    //TweenMax.set(img, {autoAlpha:0});
-
-                    /*
-                    $("body").append(img);
-
-
-                    if(i == 1)
-                    {
-                        $(img).css("left", 100).css("top", "50%");
-
-                        //img.offset = $(img).offset();
-
-                        var offset = $(img).offset();
-
-                        WireGraphic.updateDataGeom("/Brand", offset.left, offset.top);
-
-                    }
-                    */
-                }
-
-
                 _p.changeTo("/Index");
 
                 _wgDic["/Watch"] = {};
@@ -116,14 +126,14 @@
 
         _currentId = id;
 
-        var data = WireGraphic.getData(_currentId);
-        WireGraphic.changeTo(_currentId);
-
-        TweenMax.set(data.image, {autoAlpha:1});
+        if(__WG_Active) WireGraphic.changeTo(_currentId);
     };
 
     function buildContent()
     {
+        _p.styleMode = $(window).width() <= 720? "small": "large";
+        window.__WG = (__WG_Active && _p.styleMode != "small")? true: false;
+
         Index.init();
         Brand.init();
         Feature.init();
@@ -233,7 +243,7 @@
         }
 
 
-        TweenMax.to("#loading_block",.5, {alpha:0, onComplete:function()
+        TweenMax.to("#loading_block",.4, {alpha:0, onComplete:function()
         {
             $("#loading_block").detach();
         }});
@@ -297,12 +307,23 @@
             firstIn: false
         };
 
+
+
+        function firstTimeCompleted()
+        {
+            _isPlaying = false;
+            _p.triggerCbAfterChange();
+        }
+
         var tl;
 
 
         if(_currentHash == null)
         {
             options.isFirstIn = true;
+            options.onComplete = firstTimeCompleted;
+
+            _isPlaying = true;
 
             _currentHash = hashName;
             targetObj = _hashDic[hashName];
@@ -310,12 +331,15 @@
             if(targetObj.stageClass && targetObj.stageClass.beforeStageIn) targetObj.stageClass.beforeStageIn(options);
             if(targetObj.stageClass && targetObj.stageClass.afterStageIn) targetObj.stageClass.afterStageIn(options);
 
-            $("#logo").toggleClass("lighten", (_currentHash != "/Index"));
+            $("#logo").toggleClass("lighten", (_currentHash != "/Index" && _currentHash != "/Feature"));
+
         }
         else if(_wgDic[_currentHash] && _wgDic[hashName])
         {
             currentObj = _hashDic[_currentHash];
             targetObj = _hashDic[hashName];
+
+            options.isScrollUp = (targetObj.index < currentObj.index);
 
             $(currentObj.block).css("display", "block");
             $(targetObj.block).css("display", "block");
@@ -329,6 +353,11 @@
             var scrollStart = .3;
 
             tl = new TimelineMax;
+
+            tl.add(function()
+            {
+                $("#logo").toggleClass("lighten", (_currentHash != "/Index" && _currentHash != "/Feature"));
+            });
 
             if(targetObj.index > currentObj.index)
             {
@@ -349,6 +378,7 @@
 
 
             var endStart = _wgSetting.d1 + _wgSetting.d2 + _wgSetting.d3;
+            if(!__WG) endStart = 1.4;
 
 
             tl.add(function()
@@ -371,18 +401,20 @@
 
                 $(currentObj.block).css("display", "none");
 
-                $("#logo").toggleClass("lighten", (_currentHash != "/Index"));
-
                _p.triggerCbAfterChange();
             }
 
-            var startData = currentObj.stageClass.getWgData();
-            var targetData = targetObj.stageClass.getWgData();
 
-            _wgSetting.startBound = startData;
-            _wgSetting.targetBound = targetData;
+            if(__WG)
+            {
+                var startData = currentObj.stageClass.getWgData();
+                var targetData = targetObj.stageClass.getWgData();
 
-            WireGraphic.tweenTo(startData.id, targetData.id, _wgSetting);
+                _wgSetting.startBound = startData;
+                _wgSetting.targetBound = targetData;
+
+                WireGraphic.tweenTo(startData.id, targetData.id, _wgSetting);
+            }
 
             _isPlaying = true;
 
@@ -391,9 +423,11 @@
         }
         else
         {
-
+            /*
             currentObj = _hashDic[_currentHash];
             targetObj = _hashDic[hashName];
+
+            options.isScrollUp =(targetObj.index > currentObj.index);
 
             $(currentObj.block).css("display", "block");
             $(targetObj.block).css("display", "block");
@@ -441,6 +475,7 @@
             });
 
             _currentHash = hashName;
+            */
         }
 
 
@@ -461,15 +496,30 @@
         var width = _stageWidth = Main.stageWidth = $(window).width();
         var height = _stageHeight = Main.stageHeight = $(window).height();
 
-        var bgBound = Helper.getSize_cover(width, height, _p.rawWidth, _p.rawHeight);
+        var oldMode = _p.styleMode;
+        _p.styleMode = width <= 720? "small": "large";
+        window.__WG = (__WG_Active && _p.styleMode != "small")? true: false;
 
-        Index.onResize(width, height, bgBound);
-        Brand.onResize(width, height, bgBound);
-        Feature.onResize(width, height, bgBound);
-        Detail.onResize(width, height, bgBound);
-        Watch.onResize(width, height, bgBound);
-        SmallMenu.onResize(width, height, bgBound);
-        Menu.onResize(width, height, bgBound);
+
+
+        var modeChanged = _p.styleMode != oldMode;
+
+        _p.settings.isVerticalMode = height > width;
+
+        var rawWidth = _p.styleMode == "small"? 720: _p.rawWidth;
+        var rawHeight = _p.styleMode == "small"? 1280: _p.rawHeight;
+
+        var bgBound = Main.bgBound = Helper.getSize_cover(width, height, rawWidth, rawHeight);
+
+        Index.onResize(width, height, bgBound, modeChanged, _p.styleMode);
+        Brand.onResize(width, height, bgBound, modeChanged, _p.styleMode);
+        Feature.onResize(width, height, bgBound, modeChanged, _p.styleMode);
+        Detail.onResize(width, height, bgBound, modeChanged, _p.styleMode);
+        Watch.onResize(width, height, bgBound, modeChanged, _p.styleMode);
+        SmallMenu.onResize(width, height, bgBound, modeChanged, _p.styleMode);
+        Menu.onResize(width, height, bgBound, modeChanged, _p.styleMode);
+
+        if(__WG) WireGraphic.onResize(width, height);
 
     };
 

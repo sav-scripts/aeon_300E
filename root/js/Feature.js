@@ -4,6 +4,12 @@
     var _p = window.Feature = {};
     var $doms = {};
 
+    var _fetcheredDic =
+    {
+        small:false,
+        large:false
+    };
+
     var _currentIndex = -1;
     var _numContents = 4;
 
@@ -11,10 +17,20 @@
 
     var _offsetDic =
     {
-        1:null,
-        2:null,
-        3:null,
-        4:null
+        "small":
+        {
+            1:null,
+            2:null,
+            3:null,
+            4:null
+        },
+        "large":
+        {
+            1:null,
+            2:null,
+            3:null,
+            4:null
+        }
     };
 
     _p.init = function ()
@@ -24,43 +40,26 @@
 
         Helper.getInitValue($doms.iconGroup[0]);
 
-        setupContent(1, true);
+        setupContent(1);
         setupContent(2);
         setupContent(3);
         setupContent(4);
 
+        fetchGeom(Main.styleMode);
 
 
 
-        function setupContent(index, isFeature1)
+        SvgMaskLayer.init(_offsetDic[Main.styleMode][1]);
+        //SvgMaskLayer.onResize();
+        //SvgMaskLayer.updatePosition(_offsetDic[1], true);
+
+        function setupContent(index)
         {
             var $dom = $doms["feature_" + index] = $doms.container.find(".feature_" + index);
-
-            var positionPercent = $dom.position().left / $dom.parent().width() * 100;
-
-            _offsetDic[index] = positionPercent / 100;
 
             Helper.getInitValue($dom[0]);
             var v = $dom[0].init;
 
-            var image;
-
-            if(isFeature1)
-            {
-                image = WireGraphic.getData("/Feature").image;
-            }
-            else
-            {
-                image = new Image();
-                image.src = WireGraphic.getData("/Index").image.src;
-            }
-
-            $dom.find(".feature_bike").parent().append(image);
-            $dom.find(".feature_bike").detach();
-
-
-
-            image.className = "feature_bike";
 
             $dom.$btnIcon =  $doms.iconGroup.find(".feature_icon:nth-of-type("+index+")");
 
@@ -72,28 +71,33 @@
                 _p.toContent(index);
             });
 
-
             var $bike = $dom.$bike = $dom.find(".feature_bike");
-            Helper.pxToPercent($bike[0], v.w, v.h);
+            //Helper.pxToPercent($bike[0], v.w, v.h);
 
             var $desc = $dom.$desc = $dom.find(".description");
-            Helper.pxToPercent($desc[0], v.w, v.h);
+            //Helper.pxToPercent($desc[0], v.w, v.h);
 
             var $bigDot = $dom.$bigDot = $dom.find(".dot_big");
-            Helper.pxToPercent($bigDot[0], v.w, v.h);
+            //Helper.pxToPercent($bigDot[0], v.w, v.h);
 
             var $bigDotCore = $bigDot.find(".dot_core");
             var $bigDotGlow = $bigDot.find(".dot_glow");
 
-            var $smallDot = $doms.$smallDot = $dom.find(".dot_small");
-            Helper.pxToPercent($smallDot[0], v.w, v.h, {"left":true, "top":false});
+            var $smallDot = $dom.$smallDot = $dom.find(".dot_small");
+            //Helper.pxToPercent($smallDot[0], v.w, v.h, {"left":true, "top":false});
 
             $dom.childList = [$bike[0], $desc[0], $bigDot[0], $smallDot[0]];
 
-            var $line = $dom.find(".dot_line");
+            var $line = $dom.$line = $dom.find(".dot_line");
             Helper.pxToPercent($line[0], v.w, v.h);
+            $dom.vv = new Vivus('dot_line_' + index, {type: 'delayed', duration: 30, start:"manual", animTimingFunction: Vivus.EASE_IN}, onVVComplete);
 
-            $dom.vv = new Vivus('dot_line_' + index, {type: 'delayed', duration: 50, start:"manual", animTimingFunction: Vivus.EASE_IN}, onVVComplete);
+
+            var $line2 = $dom.$line2 = $dom.find(".dot_line_v2");
+            Helper.pxToPercent($line2[0], v.w, v.h);
+
+            $dom.vv2 = new Vivus('dot_line_' + index + "_v2", {type: 'delayed', duration: 10, start:"manual", animTimingFunction: Vivus.EASE_IN}, onVVComplete);
+
 
             $dom.css("visibility", "visible");
 
@@ -119,6 +123,8 @@
             {
                 twinkle.pause();
 
+                if(Main.styleMode == "small") instantly = true;
+
                 if(instantly)
                 {
                     TweenMax.set($dom.childList, {autoAlpha:0});
@@ -130,6 +136,7 @@
                     tl.to($desc,.5, {autoAlpha:0},.0);
                     tl.to($bigDot,.5, {autoAlpha:0},.1);
                     tl.to($line,.5, {autoAlpha:0},.1);
+                    tl.to($line2,.5, {autoAlpha:0},.1);
                     tl.to($smallDot,.5, {autoAlpha:0},.1);
                     tl.to($bike,.5, {autoAlpha:0},.2);
                     tl.add(function()
@@ -140,32 +147,47 @@
             };
 
             var cbAfterPlayed;
+            var vvCompletePlayed = false;
 
             $dom.playChilds = function(cb)
             {
                 cbAfterPlayed = cb;
 
+                vvCompletePlayed = false;
+
                 twinkle.restart();
 
                 $dom.vv.reset();
+                $dom.vv2.reset();
                 TweenMax.set($line, {autoAlpha:1});
+                TweenMax.set($line2, {autoAlpha:1});
+
+                var duration = Main.styleMode == "large"? .5: 0;
+
 
                 var tl = new TimelineMax;
 
                 tl.set($bigDotCore,{scale:0});
                 tl.set($bigDotGlow,{scale:0});
 
-                tl.to($bike,.5, {autoAlpha:1});
-                tl.to($smallDot,.5, {autoAlpha:1},.0);
+                tl.to($bike,duration, {autoAlpha:1});
+                tl.to($smallDot,duration, {autoAlpha:1},.0);
                 tl.add(function ()
                 {
+
                     $dom.vv.play();
+                    $dom.vv2.play();
+
+                    //Main.styleMode == "small"? $dom.vv2.play(): $dom.vv.play();
                 },.0);
 
             };
 
             function onVVComplete()
             {
+                if(vvCompletePlayed) return;
+                vvCompletePlayed = true;
+
                 var tl = new TimelineMax;
                 tl.to($bigDot,.5, {autoAlpha:1});
                 tl.to($desc,.5, {autoAlpha:1},.2);
@@ -175,7 +197,7 @@
                 tl.add(function()
                 {
                     twinkle.restart();
-                },.2)
+                },.2);
 
                 tl.add(function()
                 {
@@ -187,11 +209,67 @@
                 });
             }
         }
-
-        SvgMaskLayer.init(_offsetDic[1]);
-        //SvgMaskLayer.onResize();
-        //SvgMaskLayer.updatePosition(_offsetDic[1], true);
     };
+
+
+
+    function fetchGeom(mode)
+    {
+        if(_fetcheredDic[mode]) return;
+        _fetcheredDic[mode] = true;
+
+
+
+        var oldContainerDisplay = $doms.container.css("display");
+        $doms.container.css("display", "block");
+
+        fetcherOne(1);
+        fetcherOne(2);
+        fetcherOne(3);
+        fetcherOne(4);
+
+        $doms.container.css("display", oldContainerDisplay);
+
+        function fetcherOne(index)
+        {
+            var $dom = $doms["feature_" + index];
+
+            var oldDisplay = $dom.css("display");
+            $dom.css("display", "block");
+
+            var positionPercent = $dom.position().left / $dom.parent().width() * 100;
+            _offsetDic[mode][index] = positionPercent / 100;
+
+
+            var v = {w:100, h:100};
+
+
+            Helper.getInitValue($dom.$bike[0], true, [], {width: v.w, height: v.h}, true, mode);
+            Helper.getInitValue($dom.$desc[0], true, [], {width: v.w, height: v.h}, true, mode);
+            Helper.getInitValue($dom.$bigDot[0], true, [], {width: v.w, height: v.h}, true, mode);
+            Helper.getInitValue($dom.$smallDot[0], true, [], {width: v.w, height: v.h, styleDic:{l:true, t:false}}, true, mode);
+            //Helper.getInitValue($dom.$line[0], true, [], {width: v.w, height: v.h}, true, mode);
+            //Helper.getInitValue($dom.$line2[0], true, [], {width: v.w, height: v.h}, true, mode);
+
+            $dom.css("display", oldDisplay);
+        }
+
+        /*
+
+        Helper.getInitValue($doms.rightGroup[0], null, null, null, true, mode);
+
+        Helper.getInitValue($doms.triangle[0], null, null, null, true, mode);
+
+        var v = $doms.rightGroup[0].init[mode];
+
+        Helper.getInitValue($doms.centerBlack[0], true, [], {width: v.w, height: v.h}, true, mode);
+
+        Helper.getInitValue($doms.contentText[0], true, ["font-size", "line-height", "letter-spacing"], {width: v.w, height: v.h}, true, mode);
+        Helper.getInitValue($doms.title[0], true, ["font-size"], null, true, mode);
+
+        Helper.getInitValue($doms.bike[0], null, null, null, true, mode);
+        */
+    }
 
     _p.changeIndex = function(index)
     {
@@ -218,11 +296,13 @@
                 $old = $doms["feature_" + _currentIndex];
                 $old.css("display", "none");
                 $old.vv.stop();
+                $old.vv2.stop();
             }
 
             $new = $doms["feature_" + index];
             $new.css("display", "block");
             $new.vv.reset();
+            $new.vv2.reset();
 
             $new.hideChilds(true);
 
@@ -232,7 +312,7 @@
 
             _p.changeIndex(index);
 
-            SvgMaskLayer.toPercent(_offsetDic[index], null, true);
+            SvgMaskLayer.toPercent(_offsetDic[Main.styleMode][index], null, true);
 
             //Main.setPlaying(false);
         }
@@ -262,7 +342,7 @@
             });
 
 
-            SvgMaskLayer.toPercent(_offsetDic[index],function()
+            SvgMaskLayer.toPercent(_offsetDic[Main.styleMode][index],function()
             {
 
                 /*
@@ -296,13 +376,28 @@
         }
     };
 
-    _p.beforeStageIn = function()
+    _p.beforeStageIn = function(options)
     {
-        _p.toContent(_firstIndex, true);
+        if(options && options.isScrollUp)
+        {
+            _p.toContent(_numContents, true);
+        }
+        else
+        {
+            _p.toContent(_firstIndex, true);
+        }
+
+        if(!__WG) TweenMax.set(SvgMaskLayer.dom, {autoAlpha:0, x:200});
+
+        TweenMax.set($doms.iconGroup, {autoAlpha:0, x:100});
     };
 
     _p.afterStageIn = function(options)
     {
+        TweenMax.to($doms.iconGroup,.5, {autoAlpha:1, x:0});
+
+        TweenMax.to(SvgMaskLayer.dom,.5, {autoAlpha:1, x:0});
+
         SvgMaskLayer.play();
 
         $doms["feature_" + _currentIndex].playChilds(function()
@@ -319,11 +414,14 @@
 
     _p.beforeStageOut = function()
     {
-        var $dom = $doms["feature_" + _currentIndex];
-        $dom.hideChilds(false, function()
+        if(__WG)
         {
-            $dom.css("display", "none");
-        });
+            var $dom = $doms["feature_" + _currentIndex];
+            $dom.hideChilds(false, function()
+            {
+                $dom.css("display", "none");
+            });
+        }
 
         SvgMaskLayer.pause();
     };
@@ -368,15 +466,39 @@
         return obj;
     };
 
-    _p.onResize = function (width, height, bgBound)
+    _p.onResize = function (width, height, bgBound, modeChanged, styleMode)
     {
         SvgMaskLayer.onResize(width, height);
 
+        if(modeChanged) fetchGeom(styleMode);
 
-        Helper.applyTransform($doms.feature_1[0], bgBound.ratio, ["w", "h"]);
-        Helper.applyTransform($doms.feature_2[0], bgBound.ratio, ["w", "h"]);
-        Helper.applyTransform($doms.feature_3[0], bgBound.ratio, ["w", "h"]);
-        Helper.applyTransform($doms.feature_4[0], bgBound.ratio, ["w", "h"]);
+
+        var bound2 = bgBound;
+        if(Main.styleMode == "small") bound2 = Helper.getSize_contain(width, height, 720, 1280);
+
+        Helper.applyTransform($doms.feature_1[0], bound2.ratio, ["w", "h"]);
+        Helper.applyTransform($doms.feature_2[0], bound2.ratio, ["w", "h"]);
+        Helper.applyTransform($doms.feature_3[0], bound2.ratio, ["w", "h"]);
+        Helper.applyTransform($doms.feature_4[0], bound2.ratio, ["w", "h"]);
+
+        updateOne(1);
+        updateOne(2);
+        updateOne(3);
+        updateOne(4);
+
+
+        function updateOne(index)
+        {
+            var $dom = $doms["feature_" + index];
+            //Helper.applyTransform($dom[0], bgBound.ratio, ["w", "h"]);
+
+            Helper.applyTransform($dom.$bike[0], bgBound.ratio, null, null, ["w", "h", "t", "l"], styleMode);
+            Helper.applyTransform($dom.$desc[0], bgBound.ratio, null, null, ["w", "h", "t", "l"], styleMode);
+            Helper.applyTransform($dom.$bigDot[0], bgBound.ratio, null, null, ["w", "h", "t", "l"], styleMode);
+            Helper.applyTransform($dom.$smallDot[0], bgBound.ratio, null, null, ["t", "l"], styleMode);
+            //Helper.applyTransform($dom.$line[0], bgBound.ratio, null, null, ["w", "h", "t", "l"], styleMode);
+            //Helper.applyTransform($dom.$line2[0], bgBound.ratio, null, null, ["w", "h", "t", "l"], styleMode);
+        }
 
 
         Helper.applyTransform($doms.iconGroup[0], bgBound.ratio, ["r", "b"]);
@@ -409,6 +531,8 @@
     _p.init = function(centerPercent)
     {
         $doms.container = $(".parallelogram");
+
+        _p.dom = $doms.container[0];
 
         _currentCenter = centerPercent;
 
@@ -519,127 +643,3 @@
     };
 
 }());
-
-
-/*
-(function(){
-
-    var _p = window.SvgMaskLayer = {};
-
-    var $doms = {};
-
-    var _width = 0, _height = 0;
-
-    var _textureWidth = 400;
-
-    _p.right = 0;
-    _p.left = 0;
-    _p.offset = 600;
-
-    _p.centerPercent = 0;
-
-    var _targetRight;
-    var _targetLeft;
-
-    _p.init = function()
-    {
-        $doms.container = $("#feature_block").find(".svg_layer");
-
-        $doms.svg = $doms.container.find("svg");
-        $doms.leftPolygon = $doms.svg.find(".left_polygon");
-        $doms.rightPolygon = $doms.svg.find(".right_polygon");
-    };
-
-    _p.toPercent = function(centerPercent, cb, updateNow)
-    {
-        var duration = .6;
-
-        var oldTargetRight = _targetRight;
-        _p.updatePosition(centerPercent, updateNow);
-
-
-        if(!updateNow)
-        {
-            var tl = new TimelineMax();
-
-
-            if(_targetRight < oldTargetRight)
-            {
-                tl.to(_p,duration,{ease:Back.easeOut, left:_targetLeft, onUpdate:_p.update});
-                tl.to(_p,duration,{ease:Back.easeOut, right:_targetRight, onUpdate:_p.update, onComplete:cb},.1);
-            }
-            else
-            {
-                tl.to(_p,duration,{ease:Back.easeOut, right:_targetRight, onUpdate:_p.update});
-                tl.to(_p,duration,{ease:Back.easeOut, left:_targetLeft, onUpdate:_p.update, onComplete:cb},.1);
-            }
-        }
-        else
-        {
-            if(cb) cb.apply();
-        }
-
-    };
-
-    _p.updatePosition = function(centerPercent, updateNow)
-    {
-        _targetRight = _width * (1-centerPercent) - _height * .25 - _textureWidth * .5;
-        _targetLeft = _width - _targetRight - _textureWidth;
-
-        if(updateNow)
-        {
-            _p.right = _targetRight;
-            _p.left = _targetLeft;
-            _p.update();
-        }
-    };
-
-    _p.update = function()
-    {
-        $doms.svg.attr("width", _width).attr("height", _height);
-
-
-        //var x0 = _width * (_p.right - _p.width);
-        //var x1 = _width * (_p.right);
-        //var x2 = _width * (_p.right - _p.offset);
-        //var x3 = _width * (_p.right - _p.offset - _p.width);
-
-        //var x0 = _width - _p.right - _p.width;
-        //var x1 = _width - _p.right;
-        //var x2 = _width - _p.right - _p.offset;
-        //var x3 = _width - _p.right - _p.offset - _p.width;
-
-        //var ho = _height * .5;
-
-        var x0 = _p.left;
-        var x1 = _width - _p.right;
-        var x2 = _width - _p.right - _p.offset;
-        var x3 = _p.left - _p.offset;
-
-
-        $doms.leftPolygon.attr("points", "0,0 "+x0+",0 "+x3+","+_height+" 0," + _height);
-        $doms.rightPolygon.attr("points", x1+",0 "+_width+",0 "+_width+","+_height+" "+x2+","+_height+"");
-    };
-
-
-    _p.onResize = function (width, height)
-    {
-        if(!width && !height)
-        {
-            width = $(window).width();
-            height = $(window).height();
-        }
-
-
-        _width = width;
-        _height = height;
-
-        _textureWidth = _width * .2;
-
-        _p.offset = height * .5;
-
-        _p.update();
-    };
-    
-}());
-*/

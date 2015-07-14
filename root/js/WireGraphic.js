@@ -2,7 +2,7 @@
 
     var _p = window.WGHelper = {};
 
-    _p.load = function(_useServerData, list, cb)
+    _p.load = function(_useServerData, doLoadImage, list, cb)
     {
         var index = 0;
 
@@ -56,7 +56,16 @@
             ).done(function(response)
                 {
                     data = JSON.parse(response);
-                    loadImage();
+
+                    //loadImage();
+                    if(doLoadImage) loadImage();
+                    else
+                    {
+                        WireGraphic.addData(id, data, null, parseInt(data.width), parseInt(data.height));
+                        index ++;
+                        loadOne();
+
+                    }
 
                 }).fail(function(event)
                 {
@@ -252,16 +261,6 @@
         _p.changeTo = function(id)
         {
             __currentGraphicId = id;
-
-
-            //PointLayer.update();
-            //LineLayer.update();
-
-
-            //PolygonLayer.update();
-
-            //var obj = __graphicDic[id];
-            //BaseMap.changeTexture(obj.texture, obj.image.width, obj.image.height);
         };
 
         _p.tweenTo = function(startId, targetId, setting, cbGraphicArrived, cb)
@@ -368,24 +367,15 @@
 
         _p.updatePosition = function()
         {
-            //var g1 = __graphicDic[__currentGraphicId],
-            //    g2 = __graphicDic[__nextGraphicId];
-
-
             var g1 = _stageBound,
                 g2 = _targetBound;
 
+            if(!g1) return;
+
             if(g2)
             {
-                //_container.position.x = g1.image.offset.left + (g2.image.offset.left - g1.image.offset.left) * __tweenObj.progress;
-                //_container.position.y = g1.image.offset.top + (g2.image.offset.top - g1.image.offset.top) * __tweenObj.progress;
-
                 _container.position.x = g1.left + (g2.left - g1.left) * __tweenObj.progress;
                 _container.position.y = g1.top + (g2.top - g1.top) * __tweenObj.progress;
-
-
-                //_container.scale.x = g1.image.width / g1.width + (g2.image.width / g2.width - g1.image.width / g1.width) * __tweenObj.progress;
-                //_container.scale.y = g1.image.height / g1.height + (g2.image.height / g2.height - g1.image.height / g1.height) * __tweenObj.progress;
 
                 _container.scale.x = g1.scaleX + (g2.scaleX - g1.scaleX) * __tweenObj.progress;
                 _container.scale.y = g1.scaleY + (g2.scaleY - g1.scaleY) * __tweenObj.progress;

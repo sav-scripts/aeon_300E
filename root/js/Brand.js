@@ -5,14 +5,18 @@
 
     var $doms = {};
 
+    var _fetcheredDic =
+    {
+        small:false,
+        large:false
+    };
+
     _p.init = function ()
     {
         $doms.container = $("#brand_block");
 
         $doms.rightGroup = $doms.container.find(".right_group");
-        Helper.getInitValue($doms.rightGroup[0]);
-
-        var v = $doms.rightGroup[0].init;
+        //Helper.getInitValue($doms.rightGroup[0]);
 
         $doms.centerBlack = $doms.container.find(".center_black");
         $doms.contentText = $doms.container.find(".content_text");
@@ -24,26 +28,45 @@
         $doms.text_3 = $doms.container.find(".text_row_3");
         $doms.text_4 = $doms.container.find(".text_row_4");
 
-        Helper.getInitValue($doms.triangle[0]);
+        //Helper.getInitValue($doms.triangle[0]);
 
-        Helper.pxToPercent($doms.centerBlack[0], v.w, v.h);
-        Helper.pxToPercent($doms.contentText[0], v.w, v.h);
+        //Helper.pxToPercent($doms.centerBlack[0], v.w, v.h);
+        //Helper.pxToPercent($doms.contentText[0], v.w, v.h);
 
-        Helper.getInitValue($doms.contentText[0], true, ["font-size", "line-height", "letter-spacing"]);
-        Helper.getInitValue($doms.title[0], true, ["font-size"]);
+        //Helper.getInitValue($doms.contentText[0], true, ["font-size", "line-height", "letter-spacing"]);
+        //Helper.getInitValue($doms.title[0], true, ["font-size"]);
 
-
-        var wgImage = WireGraphic.getData("/Brand").image;
-        $doms.bike = $(wgImage);
-
-        $doms.container.append(wgImage);
-
-        $doms.bike.css("position", "absolute");
-
+        $doms.bike = $doms.container.find(".brand_bike");
         Helper.getInitValue($doms.bike[0]);
+        //Helper.getInitValue($doms.bike[0]);
+
+        fetchGeom(Main.styleMode);
     };
 
-    _p.beforeStageIn = function(option)
+    function fetchGeom(mode)
+    {
+        if(_fetcheredDic[mode]) return;
+        _fetcheredDic[mode] = true;
+
+        //Helper.clearStyles($doms.rightGroup[0]);
+
+        Helper.getInitValue($doms.rightGroup[0], null, null, null, true, mode);
+
+        Helper.getInitValue($doms.triangle[0], null, null, null, true, mode);
+
+        //Helper.pxToPercent($doms.centerBlack[0], v.w, v.h);
+        //Helper.pxToPercent($doms.contentText[0], v.w, v.h);
+
+        var v = $doms.rightGroup[0].init[mode];
+
+        Helper.getInitValue($doms.centerBlack[0], true, [], {width: v.w, height: v.h}, true, mode);
+
+        Helper.getInitValue($doms.contentText[0], true, ["font-size", "line-height", "letter-spacing"], {width: v.w, height: v.h}, true, mode);
+        Helper.getInitValue($doms.title[0], true, ["font-size"], null, true, mode);
+
+    }
+
+    _p.beforeStageIn = function()
     {
         var dx = 300;
 
@@ -56,14 +79,14 @@
         TweenMax.set($doms.contentText, {autoAlpha:0});
         TweenMax.set($doms.triangle, {autoAlpha:0});
 
-        TweenMax.set($doms.bike, {autoAlpha:0});
+        if(__WG) TweenMax.set($doms.bike, {autoAlpha:0});
     };
 
     _p.afterStageIn = function(options)
     {
-        TweenMax.to($doms.bike,.5, {autoAlpha:1});
+        if(__WG) TweenMax.to($doms.bike,.5, {autoAlpha:1});
 
-        var d1 = .6;
+        var d1 = 1;
         var e1 = Power3.easeOut;
 
         var tl = new TimelineMax();
@@ -81,7 +104,7 @@
 
     _p.beforeStageOut = function()
     {
-        TweenMax.to($doms.bike,.5, {autoAlpha:0});
+        if(__WG) TweenMax.to($doms.bike,.5, {autoAlpha:0});
     };
 
     _p.getWgData = function()
@@ -106,23 +129,20 @@
         return obj;
     };
 
-    _p.onResize = function (width, height, bgBound)
+    _p.onResize = function (width, height, bgBound, modeChanged, styleMode)
     {
-        //$doms.bike.width(bgBound.ratio * )
-        var v = $doms.bike.init;
-        $doms.bike.width(v * bgBound).height(height).css("left", 0).css("top", 0);
+        var v = $doms.bike[0].init;
+        $doms.bike.width(v.w / v.h * height).height(height).css("left", 0).css("top", 0);
+
+        if(modeChanged) fetchGeom(styleMode);
 
 
-        //var offset = $doms.bike.offset();
-        //var containerOffset = $doms.container.offset();
-        //WireGraphic.updateDataGeom("/Brand", offset.left, offset.top - containerOffset.top, $doms.bike.width(), $doms.bike.height());
+        Helper.applyTransform($doms.rightGroup[0], bgBound.ratio, ["w", "h", "ml", "mt"], null, null, styleMode);
+        Helper.applyTransform($doms.triangle[0], bgBound.ratio, ["w", "h", "l", "t"], null, null, styleMode);
 
-
-        Helper.applyTransform($doms.rightGroup[0], bgBound.ratio, ["w", "h", "ml", "mt"]);
-        Helper.applyTransform($doms.triangle[0], bgBound.ratio, ["w", "h", "l", "t"]);
-
-        Helper.applyTransform($doms.contentText[0], bgBound.ratio, ["font-size", "line-height", "letter-spacing"]);
-        Helper.applyTransform($doms.title[0], bgBound.ratio, ["font-size"]);
+        Helper.applyTransform($doms.contentText[0], bgBound.ratio, ["font-size", "line-height", "letter-spacing"], null, ["t", "l", "w", "h"], styleMode);
+        Helper.applyTransform($doms.centerBlack[0], bgBound.ratio, null, null, ["t", "l", "w", "h"], styleMode);
+        Helper.applyTransform($doms.title[0], bgBound.ratio, ["font-size"], null, null, styleMode);
     };
 
 }());

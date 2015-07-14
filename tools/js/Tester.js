@@ -31,7 +31,7 @@
         {
             //_p.loadData(dataList);
 
-            WGHelper.load(_useServerData, dataList, function()
+            WGHelper.load(_useServerData, true, dataList, function()
             {
                 for(var i=0;i<dataList.length;i++)
                 {

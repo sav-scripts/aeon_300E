@@ -77,17 +77,19 @@
         return $(dom);
     };
 
-    Helper.pxToPercent = function (dom, parentWidth, parentHeight, styleDic)
+    Helper.pxToPercent = function (dom, parentWidth, parentHeight, styleDic, targetObj)
     {
         if(!styleDic) styleDic =
         {
-            "width":true,
-            "height":false,
-            "left":true,
-            "top":false,
-            "right":true,
-            "bottom":false
+            "w":true,
+            "h":false,
+            "l":true,
+            "t":false,
+            "r":true,
+            "b":false
         };
+
+        var $dom = $(dom);
 
         /*
         process("width", parentWidth);
@@ -103,23 +105,61 @@
         for(key in styleDic)
         {
             var value = (styleDic[key] == true)? parentWidth: parentHeight;
+
             process(key, value);
         }
 
-        function process(cssName, pValue, rate)
+        function process(key, pValue, rate)
         {
             if (rate == null) rate = 100;
-            var v = getValue($(dom).css(cssName));
-            if (v != 0) $(dom).css(cssName, v / pValue * rate + "%");
+
+            var cssName = Helper.styleDic[key];
+            if(!cssName) cssName = key;
+
+            var v = getValue($dom.css(cssName));
+
+            var finalString = v / pValue * rate + "%";
+
+            if(targetObj)
+            {
+                targetObj[key] = finalString;
+            }
+            else
+            {
+                if (v != 0) $dom.css(cssName, finalString);
+            }
         }
     };
 
 
-
-    Helper.getInitValue = function (dom, ignoreDefault, extraStyles)
+    Helper.clearStyles = function(dom)
     {
-        var init = dom.init = {};
-        var geom = dom.geom = {};
+        $(dom).removeAttr("style");
+    };
+
+
+
+    Helper.getInitValue = function (dom, ignoreDefault, extraStyles, pxToPercentSetting, clearStyles, mode)
+    {
+        if(!dom.init) dom.init = {};
+        if(!dom.geom) dom.geom = {};
+
+        if(clearStyles) Helper.clearStyles(dom);
+
+
+        var init, geom;
+
+        if(mode)
+        {
+            init = dom.init[mode] = {};
+            geom = dom.geom[mode] = {};
+        }
+        else
+        {
+            init = dom.init;
+            geom = dom.geom;
+        }
+
 
         if(!ignoreDefault)
         {
@@ -162,6 +202,18 @@
             }
         }
 
+
+        if(pxToPercentSetting)
+        {
+            var parentWidth, parentHeight, styleDic;
+
+            parentWidth = pxToPercentSetting.width;
+            parentHeight = pxToPercentSetting.height;
+            styleDic = pxToPercentSetting.styleDic;
+
+            Helper.pxToPercent(dom, parentWidth, parentHeight, styleDic, init);
+        }
+
 //        console.log("width = " + $(dom).css("width"));
         //console.log("width = " + dom.currentStyle.width);
 
@@ -188,9 +240,24 @@
         "h": "height"
     };
 
-    Helper.applyTransform = function (dom, scaleRate, styleList, percentStyleList)
+    Helper.applyTransform = function (dom, scaleRate, styleList, percentStyleList, plainApplyList, mode)
     {
-        var rate = (scaleRate != null) ? dom.init.scale * scaleRate : dom.init.scale;
+        var init, geom;
+
+        if(mode)
+        {
+            init = dom.init[mode];
+            geom = dom.geom[mode];
+        }
+        else
+        {
+            init = dom.init;
+            geom = dom.geom;
+        }
+
+        var rate = (scaleRate != null) ? init.scale * scaleRate : init.scale;
+
+        var $dom = $(dom);
 
         var i, n, key, style;
         if (styleList)
@@ -201,8 +268,8 @@
                 key = styleList[i];
                 style = Helper.styleDic[key];
                 if(!style) style = key;
-                dom.geom[key] = dom.init[key] * rate;
-                $(dom).css(style, dom.geom[key] + "px");
+                geom[key] = init[key] * rate;
+                $dom.css(style, geom[key] + "px");
             }
         }
 
@@ -213,8 +280,21 @@
             {
                 key = percentStyleList[i];
                 style = Helper.styleDic[key];
-                dom.geom[key] = dom.init[key] * rate;
-                $(dom).css(style, dom.geom[key] + "%");
+                geom[key] = init[key] * rate;
+                $dom.css(style, geom[key] + "%");
+            }
+        }
+
+        if(plainApplyList)
+        {
+            n = plainApplyList.length;
+            for (i = 0; i < n; i++)
+            {
+                key = plainApplyList[i];
+                style = Helper.styleDic[key];
+                if(!style) style = key;
+
+                $dom.css(style, init[key]);
             }
         }
     };

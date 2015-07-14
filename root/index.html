@@ -2,14 +2,56 @@
 <html>
     <head lang="en">
         <meta charset="UTF-8">
-        <!--<meta name="viewport" content="width=1920; initial-scale=1, maximum-scale=1">-->
-        <meta name="viewport" content="width=720">
         <title>AEON 300E</title>
+        <!--<meta name="viewport" content="width=1920; initial-scale=1, maximum-scale=1">-->
+        <!--<meta name="viewport" content="width=720">-->
+        <script>
+
+            var wasUsedLandscape = false;
+            var rewrited = false;
+
+            updateViewport();
+            function updateViewport()
+            {
+                var portraitModeMinWidth = 720;
+                var landscapeModeMinWidth = 1200;
+
+                var divString, scaleRate, targetWidth;
+
+                if (wasUsedLandscape || (screen.width < portraitModeMinWidth && screen.width < screen.height))
+                {
+
+                    targetWidth = portraitModeMinWidth;
+                }
+                else if(screen.width < landscapeModeMinWidth && screen.width > screen.height)
+                {
+                    wasUsedLandscape = true;
+                    targetWidth = landscapeModeMinWidth
+                }
+
+                if(targetWidth != null)
+                {
+                    /*$("#myViewport").detach();*/
+                    scaleRate =  screen.width/targetWidth;
+//                    var contentString = 'width='+targetWidth+'px,initial-scale='+scaleRate+', maximum-scale='+scaleRate+', minimum-scale='+scaleRate+', user-scaleable=no';
+                    var contentString = 'width='+targetWidth+'px,initial-scale='+scaleRate+', user-scaleable=no'+', maximum-scale='+scaleRate;
+                    divString = '<meta id="myViewport" name="viewport" content="'+contentString+'">';
+                    document.write(divString);
+
+                    rewrited = true;
+                }
+            }
+
+        </script>
+
+
         <style>
             .svg-clipped {
                 -webkit-clip-path: url(#svgPath);
                 clip-path: url(#svgPath);
             }
+
+
         </style>
     </head>
 
@@ -24,22 +66,22 @@
 
         </div>
 
-        <script src="js/lib/three.min.js"></script>
+        <script src="js/lib/modernizr.custom.98362.js"></script>
+
+        <!--<script src="js/lib/three.min.js"></script>-->
         <script src="js/lib/jquery.min.js"></script>
+
         <script src="js/lib/TweenMax.min.js"></script>
 
         <script src="js/lib/vivus.js"></script>
 
-        <!--<script src="js/lib/dat.gui.js"></script>-->
         <script src="js/lib/Utility.0.0.10.js"></script>
 
-        <!--<script src="js/lib/earcut.js"></script>-->
-        <script src="js/ShaderLoader.js"></script>
+        <!--<script src="js/MyThreeHelper.js"></script>-->
 
-        <!--<script src="js/lib/dat.gui.js"></script>-->
 
         <script src="js/lib/Helper.1.0.1.js"></script>
-        <script src="js/WireGraphic.js"></script>
+        <!--<script src="js/WireGraphic.js"></script>-->
 
         <script src="js/lib/jquery.mousewheel.min.js"></script>
         <script src="js/lib/hammer.min.js"></script>
@@ -53,39 +95,22 @@
         <script src="js/Main.js"></script>
 
 
-        <svg height="0" width="0">
-            <defs>
+        <svg id="index_mask_container" height="0" width="0">
                 <clipPath id="svgPath">
+
+                    <!--
+                    <polygon class="svg_star" points="100,10 40,198 190,78 10,78 160,198"
+                             transform="translate(30) rotate(45 50 50)"></polygon>
+
+                    <text x="0" y="100" fill="red" style="font-size: 100px; stroke-width: 100px; stroke: #000000">I love SVG!</text>
+                    -->
+
+                    <polygon class="index_mask" points="0,500 1000,500 1000,600 0,600"></polygon>
+
+                    <!--
                     <circle stroke="#000000" stroke-miterlimit="10" cx="50" cy="50" r="40"></circle>
-                    <circle stroke="#000000" stroke-miterlimit="10" cx="193.949" cy="235" r="74.576"></circle>
-                    <circle stroke="#000000" stroke-miterlimit="10" cx="426.576" cy="108.305" r="47.034"></circle>
-                    <circle stroke="#000000" stroke-miterlimit="10" cx="346.915" cy="255.763" r="43.644"></circle>
-                    <circle stroke="#000000" stroke-miterlimit="10" cx="255.39" cy="82.882" r="35.17"></circle>
-                    <circle stroke="#000000" stroke-miterlimit="10" cx="328.695" cy="157.034" r="25.424"></circle>
-                    <circle stroke="#000000" stroke-miterlimit="10" cx="594.797" cy="360.424" r="121.187"></circle>
-                    <circle stroke="#000000" stroke-miterlimit="10" cx="470.008" cy="223.771" r="31.992"></circle>
-                    <circle stroke="#000000" stroke-miterlimit="10" cx="299.525" cy="400.762" r="64.407"></circle>
-                    <circle stroke="#000000" stroke-miterlimit="10" cx="634.627" cy="183.305" r="92.373"></circle>
-                    <circle stroke="#000000" stroke-miterlimit="10" cx="136.746" cy="172.712" r="106.356"></circle>
-                    <circle stroke="#000000" stroke-miterlimit="10" cx="91.831" cy="416.779" r="36.017"></circle>
-                    <circle stroke="#000000" stroke-miterlimit="10" cx="125.305" cy="335" r="25.424"></circle>
-                    <circle stroke="#000000" stroke-miterlimit="10" cx="192.424" cy="421.271" r="20.509"></circle>
-                    <circle stroke="#000000" stroke-miterlimit="10" cx="184.847" cy="362.543" r="18.22"></circle>
-                    <circle stroke="#000000" stroke-miterlimit="10" cx="436.568" cy="385.602" r="72.635"></circle>
-                    <circle stroke="#000000" stroke-miterlimit="10" cx="345.644" cy="90.085" r="23.729"></circle>
-                    <circle stroke="#000000" stroke-miterlimit="10" cx="534.627" cy="85" r="42.373"></circle>
-                    <circle stroke="#000000" stroke-miterlimit="10" cx="426.305" cy="12.017" r="83.898"></circle>
-                    <circle stroke="#000000" stroke-miterlimit="10" cx="277.458" cy="314.694" r="22.068"></circle>
-                    <circle stroke="#000000" stroke-miterlimit="10" cx="413.229" cy="195.381" r="22.669"></circle>
-                    <circle stroke="#000000" stroke-miterlimit="10" cx="277.848" cy="185" r="16.949"></circle>
-                    <circle stroke="#000000" stroke-miterlimit="10" cx="493.102" cy="158.729" r="19.492"></circle>
-                    <circle stroke="#000000" stroke-miterlimit="10" cx="424.517" cy="290.873" r="24.517"></circle>
-                    <circle stroke="#000000" stroke-miterlimit="10" cx="71.067" cy="348.56" r="49.152"></circle>
-                    <circle stroke="#000000" stroke-miterlimit="10" cx="737.221" cy="62.915" r="50.898"></circle>
-                    <circle stroke="#000000" stroke-miterlimit="10" cx="740" cy="430" r="50" ></circle>
-                    <circle stroke="#000000" stroke-miterlimit="10" cx="700" cy="700" r="500" ></circle>
+                    -->
                 </clipPath>
-            </defs>
         </svg>
 
         <div id="logo"></div>
@@ -93,10 +118,9 @@
 
         <div id="index_block" class="scroll_block" hash="/Index">
 
-            <img class="index_bike" src="images/index_bike_1920.png"/>
 
             <div class="index_scene_1">
-                <img class="background" src="images/index_bg_01.jpg"/>
+                <div class="background"></div>
                 <div class="index_text_1"></div>
                 <div class="index_text_2"></div>
                 <div class="index_text_3"></div>
@@ -104,14 +128,16 @@
             </div>
 
             <div class="index_scene_2">
-                <img class="background" src="images/index_bg_02.jpg"/>
+                <div class="background"></div>
                 <div class="index_text_1"></div>
                 <div class="index_text_2"></div>
                 <div class="index_text_3"></div>
                 <div class="index_text_4"></div>
             </div>
 
-
+            <div class="index_bike"></div>
+            <div class="index_light"></div>
+            <div class="scroll_down_icon"></div>
 
         </div>
 
@@ -135,6 +161,8 @@
 
             </div>
 
+            <div class="brand_bike"></div>
+
         </div>
 
         <div id="feature_block" class="scroll_block" hash="/Feature">
@@ -149,7 +177,10 @@
                     <div class="dot_core"></div>
                 </div>
                 <svg id="dot_line_1" class="dot_line" height="100%" width="100%" viewBox="0 0 310 5">
-                    <polyline points="255,2 0,2" style="stroke:#d1141b;stroke-width:1" ></polyline>
+                    <polyline points="255,2 0,2" style="stroke:#d1141b;stroke-width:1;fill:none;" ></polyline>
+                </svg>
+                <svg id="dot_line_1_v2" class="dot_line_v2" height="100%" width="100%" viewBox="0 0 70 400">
+                    <polyline points="2,388 65,285 65,0" style="stroke:#d1141b;stroke-width:1;fill:none;" ></polyline>
                 </svg>
                 <div class="description"></div>
 
@@ -166,6 +197,9 @@
                 <svg id="dot_line_2" class="dot_line" height="100%" width="100%" viewBox="0 0 360 90">
                     <polyline points="0,86 100,2 360,2" style="stroke:#d1141b;stroke-width:1;fill:none;" ></polyline>
                 </svg>
+                <svg id="dot_line_2_v2" class="dot_line_v2" height="100%" width="100%" viewBox="0 0 100 510">
+                    <polyline points="77,510 2,410 2,0" style="stroke:#d1141b;stroke-width:1;fill:none;" ></polyline>
+                </svg>
                 <div class="description"></div>
 
             </div>
@@ -181,6 +215,9 @@
                 <svg id="dot_line_3" class="dot_line" height="100%" width="100%" viewBox="0 0 240 100">
                     <polyline points="240,2 160,2 0,82" style="stroke:#d1141b;stroke-width:1;fill:none;" ></polyline>
                 </svg>
+                <svg id="dot_line_3_v2" class="dot_line_v2" height="100%" width="100%" viewBox="0 0 5 300">
+                    <polyline points="3,260 3,0" style="stroke:#d1141b;stroke-width:1;fill:none;" ></polyline>
+                </svg>
                 <div class="description"></div>
             </div>
             <div class="feature_4">
@@ -194,6 +231,9 @@
                 </div>
                 <svg id="dot_line_4" class="dot_line" height="100%" width="100%" viewBox="0 0 332 100">
                     <polyline points="332,78 100,78 0,2" style="stroke:#d1141b;stroke-width:1;fill:none;" ></polyline>
+                </svg>
+                <svg id="dot_line_4_v2" class="dot_line_v2" height="100%" width="100%" viewBox="0 0 70 700">
+                    <polyline points="48,672 3,572 3,0" style="stroke:#d1141b;stroke-width:1;fill:none;" ></polyline>
                 </svg>
                 <div class="description"></div>
             </div>
