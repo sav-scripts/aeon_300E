@@ -673,15 +673,15 @@ body{
     }
     #brand_block .content_text{
         line-height: 34px;
-        letter-spacing: 3px;
+        letter-spacing: 2px;
         left:121px;
-        top:120px;
+        top:106px;
         width:380px;
-        font-size: 20px;
+        font-size: 22px;
     }
     #brand_block .little_triangle{
         left:104px;
-        top:130px;
+        top:116px;
     }
 
     #brand_block .title_text{

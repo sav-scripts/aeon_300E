@@ -65,6 +65,8 @@
         //console.log(BrowserDetect.browser == "Explorer");
 
         window.__WG_Active = Modernizr.webgl;
+        //window.__WG_Active = ( function () { try { var canvas = document.createElement( 'canvas' ); return !! ( window.WebGLRenderingContext && ( canvas.getContext( 'webgl' ) || canvas.getContext( 'experimental-webgl' ) ) ); } catch ( e ) { return false; } } )();
+
         if($(window).width() <= 720) window.__WG_Active = false;
         //window.__WG = false;
 
@@ -72,7 +74,6 @@
         var s = noCache? "?v=" + new Date().getTime(): "";
 
         var wgLibs = ["js/lib/three.min.js", "js/MyThreeHelper.js", "js/WireGraphic.js"+s];
-
 
         Modernizr.load
         ({
@@ -92,6 +93,7 @@
             }
 
         });
+
 
         //buildWireGraphic(buildContent);
     };
